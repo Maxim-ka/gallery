@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonSelection">
+        <item name="android:elevation">12dp</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:drawableStart">@android:drawable/btn_radio</item>
+        <item name="android:drawablePadding">60dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+</resources>
