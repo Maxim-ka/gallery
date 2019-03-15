@@ -57,15 +57,7 @@ public class FieldsFragment extends Fragment{
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
 
-        login.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
+        login.addTextChangedListener(new MyAdapterTextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
                 if (errorLogin && !s.toString().equals("")){
@@ -75,11 +67,7 @@ public class FieldsFragment extends Fragment{
                 }
             }
         });
-        password.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+        password.addTextChangedListener(new MyAdapterTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (count > before){
@@ -87,7 +75,6 @@ public class FieldsFragment extends Fragment{
                     if (symbol < 48 || symbol > 57) errorPassword = true;
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 if (errorPassword && !s.toString().equals("")){
