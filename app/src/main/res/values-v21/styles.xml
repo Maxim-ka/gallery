@@ -10,4 +10,9 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <style name="materialButton">
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
 </resources>
