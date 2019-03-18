@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="sequentially">
+    <set>
+        <objectAnimator
+            android:propertyName="rotation"
+            android:valueFrom="45"
+            android:valueTo="-45"
+            android:repeatCount="2"
+            android:repeatMode="reverse"
+            android:duration="2000"
+            />
+
+        <objectAnimator
+            android:propertyName="scaleX"
+            android:valueFrom="10"
+            android:valueTo="5"
+            android:duration="6000"
+            />
+        <objectAnimator
+            android:propertyName="scaleY"
+            android:valueFrom="10"
+            android:valueTo="5"
+            android:duration="6000"
+            />
+        <!--какое свойство надо задать чтоб менять цвет обьекта?-->
+        <!--<objectAnimator-->
+            <!--android:propertyName="backgroundColor"-->
+            <!--android:valueFrom="?attr/colorAccent"-->
+            <!--android:valueTo="?attr/colorControlHighlight"-->
+            <!--android:duration="5000"/>-->
+
+
+    </set>
+    <objectAnimator
+        android:propertyName="rotation"
+        android:valueFrom="-45"
+        android:valueTo="0"
+        android:duration="500"
+        />
+</set>
