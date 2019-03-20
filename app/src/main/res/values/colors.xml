@@ -15,4 +15,6 @@
     <color name="colorPrimaryTh3">#009688</color>
     <color name="colorPrimaryDarkTh3">#00796B</color>
     <color name="colorAccentTh3">#CDDC39</color>
+
+    <color name="colorBadge">#FFF43B5D</color>
 </resources>
