@@ -2,31 +2,33 @@ package reschikov.geekbrains.gallery;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-
 import android.os.Bundle;
+import androidx.transition.ArcMotion;
+import androidx.transition.ChangeBounds;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
-
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Counted{
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Counted, Switchable{
 
     private int counter;
     private View viewBadge;
     private BottomNavigationItemView notifications;
     private TextView badge;
-
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNavigationView.getChildAt(0);
@@ -34,12 +36,27 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         viewBadge = LayoutInflater.from(this).inflate(R.layout.badge, menuView, false);
         badge = viewBadge.findViewById(R.id.text_badge);
 
-        if (savedInstanceState == null) loadFragment(new HomeFragment());
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frame_master, new HomeFragment(), "Home")
+                    .commit();
+        }
     }
 
-    private void loadFragment(Fragment fragment) {
+    private void changeFragment(Fragment newFragment, View view, String tag) {
+        ChangeBounds changeBounds = new ChangeBounds();
+        changeBounds.setDuration(1_000);
+        changeBounds.setPathMotion(new ArcMotion());
+        changeBounds.setInterpolator(new AccelerateDecelerateInterpolator());
+        changeBounds.setResizeClip(true);
+
+        newFragment.setSharedElementEnterTransition(changeBounds);
+
+
         getSupportFragmentManager().beginTransaction()
-            .replace(R.id.frame_master, fragment)
+            .setCustomAnimations(R.animator.animator_enter, R.animator.animator_exit)
+            .replace(R.id.frame_master, newFragment, tag)
+            .addSharedElement(view, ViewCompat.getTransitionName(view))
             .commit();
     }
 
@@ -53,10 +70,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        counter = savedInstanceState.getInt("counter");
-        if (counter != 0){
-            notifications.addView(viewBadge);
-            setBadge();
+        if (savedInstanceState != null){
+            counter = savedInstanceState.getInt("counter");
+            if (counter != 0){
+                notifications.addView(viewBadge);
+                setBadge();
+            }
         }
     }
 
@@ -68,13 +87,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment currentFragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+        String tag = currentFragment.getTag();
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                loadFragment(new HomeFragment());
-                return true;
+                if ("Notifications".equals(tag)){
+                    NotificationsFragment notificationsFragment = (NotificationsFragment) currentFragment;
+                    changeFragment(new HomeFragment(), notificationsFragment.getImage(),"Home");
+                    return true;
+                }
+                return false;
             case R.id.navigation_notifications:
-                loadFragment(new NotificationsFragment());
-                return true;
+                if ("Home".equals(tag)){
+                    HomeFragment homeFragment = (HomeFragment) currentFragment;
+                    changeFragment(new NotificationsFragment(), homeFragment.getImage(), "Notifications");
+                    return true;
+                }
+                return false;
         }
         return false;
     }
@@ -92,5 +121,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         counter = 0;
         badge.setText(null);
         notifications.removeView(viewBadge);
+    }
+
+    @Override
+    public void toggleFragments(int id) {
+        bottomNavigationView.setSelectedItemId(id);
     }
 }

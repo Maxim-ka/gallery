@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="NewApi"
+    android:drawable="@drawable/vector_bell">
+
+    <target
+        android:animation="@animator/animator_notifications"
+        android:name="bell_ringing"/>
+
+</animated-vector>

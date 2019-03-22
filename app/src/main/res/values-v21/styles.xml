@@ -15,4 +15,8 @@
         <item name="android:elevation">4dp</item>
     </style>
 
+    <style name="textBadge">
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+    </style>
+
 </resources>
