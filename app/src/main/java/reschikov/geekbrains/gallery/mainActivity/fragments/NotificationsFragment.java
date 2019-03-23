@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery;
+package reschikov.geekbrains.gallery.mainActivity.fragments;
 
 import android.content.Context;
 import android.graphics.drawable.Animatable;
@@ -13,6 +13,10 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
+import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.Rule;
+import reschikov.geekbrains.gallery.mainActivity.Counted;
+import reschikov.geekbrains.gallery.mainActivity.Switchable;
 
 public class NotificationsFragment extends Fragment {
 

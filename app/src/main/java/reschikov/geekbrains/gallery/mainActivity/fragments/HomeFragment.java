@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery;
+package reschikov.geekbrains.gallery.mainActivity.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.Rule;
+import reschikov.geekbrains.gallery.mainActivity.Counted;
+import reschikov.geekbrains.gallery.mainActivity.Switchable;
 
 public class HomeFragment extends Fragment {
 

@@ -5,6 +5,6 @@
         android:color="?attr/colorPrimaryDark" />
     <item
         android:state_checked="false"
-        android:color="?attr/colorControlHighlight" />
+        android:color="?attr/colorSecondary" />
 
 </selector>

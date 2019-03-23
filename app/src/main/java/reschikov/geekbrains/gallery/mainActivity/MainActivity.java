@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery;
+package reschikov.geekbrains.gallery.mainActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +7,11 @@ import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import androidx.transition.ArcMotion;
 import androidx.transition.ChangeBounds;
+import reschikov.geekbrains.gallery.mainActivity.fragments.gallery.GalleryFragment;
+import reschikov.geekbrains.gallery.mainActivity.fragments.HomeFragment;
+import reschikov.geekbrains.gallery.mainActivity.fragments.NotificationsFragment;
+import reschikov.geekbrains.gallery.R;
+
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,13 +42,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         badge = viewBadge.findViewById(R.id.text_badge);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.frame_master, new HomeFragment(), "Home")
-                    .commit();
+            loadFragment(new HomeFragment(), "Home");
         }
     }
 
+    private void loadFragment(Fragment newFragment, String tag){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.frame_master, newFragment, tag)
+                .commit();
+    }
+
     private void changeFragment(Fragment newFragment, View view, String tag) {
+        String transitionName = ViewCompat.getTransitionName(view);
+        if (transitionName == null) return;
+
         ChangeBounds changeBounds = new ChangeBounds();
         changeBounds.setDuration(1_000);
         changeBounds.setPathMotion(new ArcMotion());
@@ -52,11 +64,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         newFragment.setSharedElementEnterTransition(changeBounds);
 
-
         getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.animator.animator_enter, R.animator.animator_exit)
             .replace(R.id.frame_master, newFragment, tag)
-            .addSharedElement(view, ViewCompat.getTransitionName(view))
+            .addSharedElement(view, transitionName)
             .commit();
     }
 
@@ -89,21 +100,35 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment currentFragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
         String tag = currentFragment.getTag();
+        if (tag == null) return false;
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                if ("Notifications".equals(tag)){
-                    NotificationsFragment notificationsFragment = (NotificationsFragment) currentFragment;
-                    changeFragment(new HomeFragment(), notificationsFragment.getImage(),"Home");
-                    return true;
+                switch (tag){
+                    case "Notifications":
+                        NotificationsFragment notificationsFragment = (NotificationsFragment) currentFragment;
+                        changeFragment(new HomeFragment(), notificationsFragment.getImage(),"Home");
+                        return true;
+                    case "Gallery":
+                        loadFragment(new HomeFragment(), "Home");
+                        return true;
+                    default:
+                        return false;
                 }
-                return false;
+            case R.id.navigation_gallery:
+                loadFragment(new GalleryFragment(), "Gallery");
+                return true;
             case R.id.navigation_notifications:
-                if ("Home".equals(tag)){
-                    HomeFragment homeFragment = (HomeFragment) currentFragment;
-                    changeFragment(new NotificationsFragment(), homeFragment.getImage(), "Notifications");
-                    return true;
+                switch (tag){
+                    case "Home":
+                        HomeFragment homeFragment = (HomeFragment) currentFragment;
+                        changeFragment(new NotificationsFragment(), homeFragment.getImage(), "Notifications");
+                        return true;
+                    case "Gallery":
+                        loadFragment(new NotificationsFragment(), "Notifications");
+                        return true;
+                    default:
+                        return false;
                 }
-                return false;
         }
         return false;
     }

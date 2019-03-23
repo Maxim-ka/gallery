@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery;
+package reschikov.geekbrains.gallery.mainActivity;
 
 public interface Switchable {
     void toggleFragments(int id);
