@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import reschikov.geekbrains.gallery.R;
 
-public class FieldsFragment extends Fragment{
+class FieldsFragment extends Fragment{
 
     private TextInputLayout loginInputLayout;
     private TextInputLayout passwordInputLayout;

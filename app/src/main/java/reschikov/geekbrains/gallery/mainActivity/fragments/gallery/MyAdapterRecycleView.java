@@ -4,16 +4,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import java.util.Collections;
 import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import reschikov.geekbrains.gallery.R;
 
-public class MyAdapterRecycleView extends RecyclerView.Adapter {
+class MyAdapterRecycleView extends RecyclerView.Adapter {
 
-    private List<Integer> list;
+    private final List<Integer> list;
 
     MyAdapterRecycleView(List<Integer> list) {
         this.list = list;
@@ -34,7 +33,13 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
+        if (list == null) return 0;
         return list.size();
+    }
+
+    void move(int fromPos, int toPos){
+        Collections.swap(list, fromPos, toPos);
+        notifyItemMoved(fromPos, toPos);
     }
 
     void delete(int pos){
@@ -44,7 +49,7 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter {
 
     static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private ImageView imageView;
+        private final ImageView imageView;
 
         MyViewHolder(@NonNull View itemView) {
             super(itemView);

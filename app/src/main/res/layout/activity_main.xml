@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="labeled"
         app:itemIconTint="@drawable/bottom_navigation_colors"
         app:itemTextColor="@drawable/bottom_navigation_colors"
         app:layout_constraintTop_toBottomOf="@id/frame_master"

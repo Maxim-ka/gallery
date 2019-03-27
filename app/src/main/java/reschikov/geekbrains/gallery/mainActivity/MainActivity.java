@@ -96,6 +96,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         outState.putInt("counter", counter);
     }
 
+    private boolean loadGallery(Fragment currentFragment, String tag, int spanCount){
+        if (!"Gallery".equals(tag)){
+            loadFragment(GalleryFragment.newInstance(spanCount), "Gallery");
+            return true;
+        }
+        GalleryFragment fragment = (GalleryFragment) currentFragment;
+        if (fragment.getSpanCount() != spanCount) {
+            fragment.setLayoutManager(spanCount);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment currentFragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
@@ -114,9 +127,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     default:
                         return false;
                 }
-            case R.id.navigation_gallery:
-                loadFragment(new GalleryFragment(), "Gallery");
-                return true;
+            case R.id.navigation_gallery_list:
+                return loadGallery(currentFragment, tag, 1);
+            case R.id.navigation_gallery_grid:
+                return loadGallery(currentFragment, tag, 2);
             case R.id.navigation_notifications:
                 switch (tag){
                     case "Home":
