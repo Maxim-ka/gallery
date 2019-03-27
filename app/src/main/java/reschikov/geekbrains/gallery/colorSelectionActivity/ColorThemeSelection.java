@@ -1,8 +1,9 @@
-package reschikov.geekbrains.gallery;
+package reschikov.geekbrains.gallery.colorSelectionActivity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import reschikov.geekbrains.gallery.R;
 
 public class ColorThemeSelection extends AppCompatActivity {
 

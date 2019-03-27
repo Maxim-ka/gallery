@@ -1,9 +1,8 @@
-package reschikov.geekbrains.gallery;
+package reschikov.geekbrains.gallery.inputFieldsFragment;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +15,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import reschikov.geekbrains.gallery.R;
 
-public class FieldsFragment extends Fragment{
+class FieldsFragment extends Fragment{
 
     private TextInputLayout loginInputLayout;
     private TextInputLayout passwordInputLayout;
