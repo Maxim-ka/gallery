@@ -1,6 +1,7 @@
 package reschikov.geekbrains.gallery.mainActivity.fragments;
 
 import android.content.Context;
+import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,20 @@ public class HomeFragment extends Fragment {
         button.setOnClickListener(viewButton -> counted.count());
         view.setOnClickListener(viewButton -> switchable.toggleFragments(R.id.navigation_notifications));
 
+        if (getContext() != null){
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+//                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant_2));
+                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant_3));
+//                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant_4));
+                ((Animatable) view.getBackground()).start();
+            }
+//            else {
+//                AnimatedVectorDrawableCompat avdCompact = (AnimatedVectorDrawableCompat) getContext().getResources().getDrawable(R.drawable.animated_vector_ant_3);
+//                AnimatedVectorDrawableCompat avdCompact = (AnimatedVectorDrawableCompat) getContext().getResources().getDrawable(R.drawable.animated_vector_ant_4);
+//                view.setBackground(avdCompact);
+//            }
+//            ((Animatable) view.getBackground()).start();
+        }
         return view;
     }
 

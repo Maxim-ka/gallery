@@ -7,6 +7,18 @@
     android:gravity="center"
     >
 
+    <TextView
+        android:id="@+id/string_font"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/font_gabriela"
+        android:text="До свидания"
+        android:textSize="42sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/image_home"/>
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image_home"
         android:layout_width="128dp"
