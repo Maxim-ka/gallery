@@ -39,9 +39,7 @@ public class HomeFragment extends Fragment {
 
         if (getContext() != null){
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-//                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant_2));
-                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant_3));
-//                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant_4));
+                view.setBackground(getContext().getDrawable(R.drawable.animated_vector_ant));
                 ((Animatable) view.getBackground()).start();
             }
 //            else {
