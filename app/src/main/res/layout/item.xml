@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardBackgroundColor="@android:color/darker_gray"
     app:strokeWidth="2dp"
@@ -17,5 +17,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="image" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:checkable="true"
+        android:layout_margin="16dp"
+        app:chipIcon="@drawable/ic_favorite_border_red_a700_24dp"
+        app:checkedIcon="@drawable/ic_favorite_red_a700_24dp"
+        app:chipEndPadding="0dp"
+        app:iconStartPadding="8dp"
+        app:rippleColor="?attr/colorAccent"/>
 
 </com.google.android.material.card.MaterialCardView>

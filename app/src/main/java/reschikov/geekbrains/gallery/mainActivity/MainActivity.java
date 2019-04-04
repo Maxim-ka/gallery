@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+
+import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.transition.ArcMotion;
 import androidx.transition.ChangeBounds;
-import reschikov.geekbrains.gallery.mainActivity.fragments.gallery.GalleryFragment;
+import reschikov.geekbrains.gallery.mainActivity.fragments.pager.ViewPagerFragment;
 import reschikov.geekbrains.gallery.mainActivity.fragments.HomeFragment;
 import reschikov.geekbrains.gallery.mainActivity.fragments.NotificationsFragment;
 import reschikov.geekbrains.gallery.R;
@@ -97,13 +99,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private boolean loadGallery(Fragment currentFragment, String tag, int spanCount){
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && spanCount != 2){
+            bottomNavigationView.setSelectedItemId(R.id.navigation_gallery_grid);
+            return false;
+        }
         if (!"Gallery".equals(tag)){
-            loadFragment(GalleryFragment.newInstance(spanCount), "Gallery");
+            loadFragment(ViewPagerFragment.newInstance(spanCount), "Gallery");
             return true;
         }
-        GalleryFragment fragment = (GalleryFragment) currentFragment;
+        ViewPagerFragment fragment = (ViewPagerFragment) currentFragment;
         if (fragment.getSpanCount() != spanCount) {
-            fragment.setLayoutManager(spanCount);
+            fragment.setSpanCount(spanCount);
             return true;
         }
         return false;

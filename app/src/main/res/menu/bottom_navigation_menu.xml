@@ -10,7 +10,7 @@
         android:title="home"
         android:titleCondensed="home"
         android:tooltipText="home"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_gallery_list"
@@ -18,7 +18,7 @@
         android:title="gallery list"
         android:titleCondensed="list"
         android:tooltipText="gallery list"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_gallery_grid"
@@ -26,7 +26,7 @@
         android:title="gallery table"
         android:titleCondensed="table"
         android:tooltipText="gallery table"
-        app:showAsAction="always|withText"/>
+        app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_notifications"
@@ -34,6 +34,6 @@
         android:title="notifications"
         android:titleCondensed="notifications"
         android:tooltipText="notifications"
-        app:showAsAction="always|withText"
+        app:showAsAction="withText"
         />
 </menu>
