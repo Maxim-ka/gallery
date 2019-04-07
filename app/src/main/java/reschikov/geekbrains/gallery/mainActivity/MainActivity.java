@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.ArcMotion;
 import androidx.transition.ChangeBounds;
+import reschikov.geekbrains.gallery.colorSelectionActivity.ColorThemeSelection;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
 import reschikov.geekbrains.gallery.mainActivity.fragments.pager.ViewPagerFragment;
 import reschikov.geekbrains.gallery.mainActivity.fragments.HomeFragment;
@@ -150,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     default:
                         return false;
                 }
+            case R.id.navigation_setting:
+                startActivity(new Intent(getBaseContext(), ColorThemeSelection.class));
+                return true;
         }
         return false;
     }
