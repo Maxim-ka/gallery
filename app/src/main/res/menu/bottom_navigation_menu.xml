@@ -8,32 +8,24 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
         android:title="home"
-        android:titleCondensed="home"
-        android:tooltipText="home"
         app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_gallery_list"
         android:icon="@drawable/ic_view_headline_black_24dp"
         android:title="gallery list"
-        android:titleCondensed="list"
-        android:tooltipText="gallery list"
         app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_gallery_grid"
         android:icon="@drawable/ic_view_module_black_24dp"
         android:title="gallery table"
-        android:titleCondensed="table"
-        android:tooltipText="gallery table"
         app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="notifications"
-        android:titleCondensed="notifications"
-        android:tooltipText="notifications"
         app:showAsAction="withText"
         />
 </menu>

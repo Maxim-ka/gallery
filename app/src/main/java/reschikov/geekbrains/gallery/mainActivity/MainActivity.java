@@ -4,16 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-
-import android.content.res.Configuration;
 import android.os.Bundle;
+
+import androidx.lifecycle.ViewModelProvider;
 import androidx.transition.ArcMotion;
 import androidx.transition.ChangeBounds;
+import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
 import reschikov.geekbrains.gallery.mainActivity.fragments.pager.ViewPagerFragment;
 import reschikov.geekbrains.gallery.mainActivity.fragments.HomeFragment;
 import reschikov.geekbrains.gallery.mainActivity.fragments.NotificationsFragment;
 import reschikov.geekbrains.gallery.R;
-
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,11 +30,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private BottomNavigationItemView notifications;
     private TextView badge;
     private BottomNavigationView bottomNavigationView;
+    private boolean isPortrait;
+    private MyViewModelSpanCount modelSpanCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        isPortrait = getResources().getBoolean(R.bool.is_portrait);
+        modelSpanCount =  new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MyViewModelSpanCount.class);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
@@ -98,21 +102,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         outState.putInt("counter", counter);
     }
 
-    private boolean loadGallery(Fragment currentFragment, String tag, int spanCount){
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && spanCount != 2){
+    private boolean loadGallery(String tag, int spanCount){
+        if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_list && spanCount == 1) return false;
+        if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_grid && spanCount == 2) return false;
+        if (!isPortrait && spanCount != 2){
             bottomNavigationView.setSelectedItemId(R.id.navigation_gallery_grid);
             return false;
         }
-        if (!"Gallery".equals(tag)){
-            loadFragment(ViewPagerFragment.newInstance(spanCount), "Gallery");
-            return true;
+        modelSpanCount.setValueLiveData(spanCount);
+        if (!"ViewPager".equals(tag)){
+            loadFragment(new ViewPagerFragment(), "ViewPager");
         }
-        ViewPagerFragment fragment = (ViewPagerFragment) currentFragment;
-        if (fragment.getSpanCount() != spanCount) {
-            fragment.setSpanCount(spanCount);
-            return true;
-        }
-        return false;
+        return true;
     }
 
     @Override
@@ -127,23 +128,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         NotificationsFragment notificationsFragment = (NotificationsFragment) currentFragment;
                         changeFragment(new HomeFragment(), notificationsFragment.getImage(),"Home");
                         return true;
-                    case "Gallery":
+                    case "ViewPager":
                         loadFragment(new HomeFragment(), "Home");
                         return true;
                     default:
                         return false;
                 }
             case R.id.navigation_gallery_list:
-                return loadGallery(currentFragment, tag, 1);
+                return loadGallery(tag, 1);
             case R.id.navigation_gallery_grid:
-                return loadGallery(currentFragment, tag, 2);
+                return loadGallery(tag, 2);
             case R.id.navigation_notifications:
                 switch (tag){
                     case "Home":
                         HomeFragment homeFragment = (HomeFragment) currentFragment;
                         changeFragment(new NotificationsFragment(), homeFragment.getImage(), "Notifications");
                         return true;
-                    case "Gallery":
+                    case "ViewPager":
                         loadFragment(new NotificationsFragment(), "Notifications");
                         return true;
                     default:
