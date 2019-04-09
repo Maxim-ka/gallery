@@ -1,6 +1,5 @@
 package reschikov.geekbrains.gallery.mainActivity.fragments.pager.gallery;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,6 @@ import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.data.MyViewModelMyImage;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
-import reschikov.geekbrains.gallery.mainActivity.Switchable;
 
 public class GalleryFragment extends Fragment{
 
@@ -30,7 +28,6 @@ public class GalleryFragment extends Fragment{
     private Transition transition;
     private ArrayList<MyImage> list;
     private MyViewModelMyImage modelMyImage;
-    private Switchable switchable;
     private int spanCount;
 
     @Nullable
@@ -46,11 +43,7 @@ public class GalleryFragment extends Fragment{
         if (savedInstanceState == null) getImages();
         else {
             list = savedInstanceState.getParcelableArrayList("myImageList");
-            spanCount = savedInstanceState.getInt("spanCount");
-            boolean isPortrait = getResources().getBoolean(R.bool.is_portrait);
-            if (!isPortrait && spanCount != 2){
-                switchable.toggleFragments(R.id.navigation_gallery_grid);
-            }
+            spanCount = savedInstanceState.getInt("spanCount");//
         }
         myAdapter = new MyAdapterRecycleView(list, modelMyImage);
         recyclerView.setAdapter(myAdapter);
@@ -76,12 +69,6 @@ public class GalleryFragment extends Fragment{
         list.add(new MyImage(R.drawable.image4));
         list.add(new MyImage(R.drawable.image5));
         list.add(new MyImage(R.drawable.image6));
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        switchable = (Switchable) context;
     }
 
     @Override

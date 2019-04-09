@@ -5,14 +5,15 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:orientation="vertical">
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/but_theme_0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="Тема_26"
+        android:text="Тема_0"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,31 +35,30 @@
         android:id="@+id/but_theme_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Тема_27"
+        android:text="Тема_1"
         app:layout_constraintTop_toBottomOf="@id/current"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/but_theme_2"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/but_theme_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Тема_2"
+        app:layout_constraintTop_toBottomOf="@id/but_theme_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/but_theme_3"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/but_theme_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Тема_3"
+        app:layout_constraintTop_toBottomOf="@id/but_theme_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <!--<com.google.android.material.button.MaterialButton-->
-        <!--android:id="@+id/but_theme_2"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Тема_28"-->
-        <!--app:layout_constraintTop_toBottomOf="@id/but_theme_1"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"/>-->
-
-    <!--<com.google.android.material.button.MaterialButton-->
-        <!--android:id="@+id/but_theme_3"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Тема_29"-->
-        <!--app:layout_constraintTop_toBottomOf="@id/but_theme_2"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"/>-->
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

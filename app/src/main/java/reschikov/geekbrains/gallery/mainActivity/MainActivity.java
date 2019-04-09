@@ -53,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment(), "Home");
         }
+
+        boolean isPortrait = getResources().getBoolean(R.bool.is_portrait);
+        if (!isPortrait && modelSpanCount.getLiveData().getValue() != null &&
+                modelSpanCount.getLiveData().getValue() != 2){
+           modelSpanCount.setValueLiveData(2);
+        }
     }
 
     private void loadFragment(Fragment newFragment, String tag){
@@ -85,6 +91,37 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             if (counter > 9) badge.setText("9+");
             else badge.setText(String.valueOf(counter));
         }
+    }
+
+    private void checkItemMenu(){
+        Fragment currentFragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getFragments().size() - 1);
+        String tag = currentFragment.getTag();
+        if (tag == null) return;
+        switch (tag){
+            case "Home":
+                if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home) bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+                break;
+            case "ViewPager":
+                if (modelSpanCount.getLiveData().getValue() == null) return;
+                switch (modelSpanCount.getLiveData().getValue()){
+                    case 1:
+                        if (bottomNavigationView.getSelectedItemId() != R.id.navigation_gallery_list) bottomNavigationView.setSelectedItemId(R.id.navigation_gallery_list);
+                        return;
+                    case 2:
+                        if (bottomNavigationView.getSelectedItemId() != R.id.navigation_gallery_grid) bottomNavigationView.setSelectedItemId(R.id.navigation_gallery_grid);
+                        return;
+                }
+                break;
+            case "Notifications":
+                if (bottomNavigationView.getSelectedItemId() != R.id.navigation_notifications) bottomNavigationView.setSelectedItemId(R.id.navigation_notifications);
+
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkItemMenu();
     }
 
     @Override
