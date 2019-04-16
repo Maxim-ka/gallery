@@ -1,5 +1,6 @@
 package reschikov.geekbrains.gallery.colorSelectionActivity;
 
+import android.content.SharedPreferences;
 import android.graphics.Path;
 import android.os.Bundle;
 
@@ -31,11 +32,14 @@ public class ColorThemeSelection extends AppCompatActivity implements View.OnCli
     @BindView(R.id.constraintLayout) ConstraintLayout constraintLayout;
     private final int[] ids = new int[]{R.id.but_theme_0, R.id.current, R.id.but_theme_1, R.id.but_theme_2, R.id.but_theme_3};
     private Unbinder unbinder;
+    private SharedPreferences sp;
     private ConstraintSet set;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp = getSharedPreferences("theme", MODE_PRIVATE);
+        setTheme(sp.getInt("theme", R.style.AppTheme0));
         setContentView(R.layout.activity_color_theme_selection);
         unbinder = ButterKnife.bind(this);
 
@@ -50,12 +54,34 @@ public class ColorThemeSelection extends AppCompatActivity implements View.OnCli
 
     @OnClick({R.id.but_theme_0, R.id.but_theme_1, R.id.but_theme_2, R.id.but_theme_3})
     public void onClick(View v) {
-        changeTheme(v.getId());
-        activateCurrentButton();
-        v.setEnabled(false);
+        switch (v.getId()){
+            case R.id.but_theme_0:
+                changeTheme(R.style.AppTheme0);
+                break;
+            case R.id.but_theme_1:
+                changeTheme(R.style.AppTheme1);
+                break;
+            case R.id.but_theme_2:
+                changeTheme(R.style.AppTheme2);
+                break;
+            case R.id.but_theme_3:
+                changeTheme(R.style.AppTheme3);
+                break;
+        }
+        moveView(v.getId());
+//        recreate();
     }
 
-    private void changeTheme(int id){
+    private void changeTheme(int theme){
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("theme", theme);
+        editor.apply();
+    }
+
+    private void moveView(int id){
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putInt("currentButton", id);
+        editor.apply();
         set.clone(constraintLayout);
         TransitionManager.beginDelayedTransition(constraintLayout, createAnimate());
         createNewChainId(id);
@@ -98,22 +124,6 @@ public class ColorThemeSelection extends AppCompatActivity implements View.OnCli
                 return;
             }
         }
-    }
-
-    private void activateCurrentButton() {
-        if (!buttonTheme0.isEnabled()) {
-            buttonTheme0.setEnabled(true);
-            return ;
-        }
-        if (!buttonTheme1.isEnabled()) {
-            buttonTheme1.setEnabled(true);
-            return ;
-        }
-        if (!buttonTheme2.isEnabled()) {
-            buttonTheme2.setEnabled(true);
-            return ;
-        }
-        buttonTheme3.setEnabled(true);
     }
 
     @Override

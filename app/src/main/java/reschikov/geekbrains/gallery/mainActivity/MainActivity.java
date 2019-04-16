@@ -6,6 +6,7 @@ import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -28,6 +29,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Counted, Switchable{
 
+    private int theme;
     private int counter;
     private View viewBadge;
     private BottomNavigationItemView notifications;
@@ -39,6 +41,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        int theme = getSelectedTheme();
+        if (this.theme != theme) {
+            this.theme = theme;
+            setTheme(theme);
+        }
         setContentView(R.layout.activity_main);
         isPortrait = getResources().getBoolean(R.bool.is_portrait);
         modelSpanCount =  new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MyViewModelSpanCount.class);
@@ -59,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 modelSpanCount.getLiveData().getValue() != 2){
            modelSpanCount.setValueLiveData(2);
         }
+    }
+
+    private int getSelectedTheme(){
+        SharedPreferences sp = getSharedPreferences("theme", MODE_PRIVATE);
+        return sp.getInt("theme", R.style.AppTheme0);
     }
 
     private void loadFragment(Fragment newFragment, String tag){
@@ -99,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (tag == null) return;
         switch (tag){
             case "Home":
-                if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home) bottomNavigationView.setSelectedItemId(R.id.navigation_home);
+                if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home) bottomNavigationView.getMenu().findItem(R.id.navigation_home).setChecked(true);
                 break;
             case "ViewPager":
                 if (modelSpanCount.getLiveData().getValue() == null) return;
@@ -113,9 +125,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 }
                 break;
             case "Notifications":
-                if (bottomNavigationView.getSelectedItemId() != R.id.navigation_notifications) bottomNavigationView.setSelectedItemId(R.id.navigation_notifications);
+                if (bottomNavigationView.getSelectedItemId() != R.id.navigation_notifications) bottomNavigationView.getMenu().findItem(R.id.navigation_notifications).setChecked(true);
 
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (theme != getSelectedTheme()) recreate();
     }
 
     @Override
@@ -145,10 +163,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private boolean loadGallery(String tag, int spanCount){
         if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_list && spanCount == 1) return false;
         if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_grid && spanCount == 2) return false;
-        if (!isPortrait && spanCount != 2){
-            bottomNavigationView.setSelectedItemId(R.id.navigation_gallery_grid);
-            return false;
-        }
+        if (!isPortrait && spanCount != 2) return false;
         modelSpanCount.setValueLiveData(spanCount);
         if (!"ViewPager".equals(tag)){
             loadFragment(new ViewPagerFragment(), "ViewPager");

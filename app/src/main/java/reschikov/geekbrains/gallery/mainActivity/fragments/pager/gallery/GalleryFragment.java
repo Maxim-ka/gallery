@@ -43,7 +43,7 @@ public class GalleryFragment extends Fragment{
         if (savedInstanceState == null) getImages();
         else {
             list = savedInstanceState.getParcelableArrayList("myImageList");
-            spanCount = savedInstanceState.getInt("spanCount");//
+            spanCount = savedInstanceState.getInt("spanCount");
         }
         myAdapter = new MyAdapterRecycleView(list, modelMyImage);
         recyclerView.setAdapter(myAdapter);
