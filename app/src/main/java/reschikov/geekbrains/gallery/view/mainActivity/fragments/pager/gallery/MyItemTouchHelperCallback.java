@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.mainActivity.fragments.pager.gallery;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery;
 
 import android.graphics.Canvas;
 import androidx.annotation.NonNull;
@@ -17,7 +17,6 @@ class MyItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         int dragFlag = ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END;
-//        int swipeFlag = ItemTouchHelper.START | ItemTouchHelper.END;
         int swipeFlag = 0;
         return makeMovementFlags(dragFlag, swipeFlag);
     }

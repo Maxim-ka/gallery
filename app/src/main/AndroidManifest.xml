@@ -12,14 +12,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme0"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".mainActivity.MainActivity"
+        <activity android:name=".view.mainActivity.MainActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".colorSelectionActivity.ColorThemeSelection">
+        <activity android:name=".view.colorSelectionActivity.ColorThemeSelection">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

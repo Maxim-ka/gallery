@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.colorSelectionActivity;
+package reschikov.geekbrains.gallery.view.colorSelectionActivity;
 
 import android.content.SharedPreferences;
 import android.graphics.Path;

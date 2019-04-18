@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.mainActivity.fragments.pager;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager;
 
 import android.view.View;
 

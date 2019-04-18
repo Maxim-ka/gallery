@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.inputFieldsFragment;
+package reschikov.geekbrains.gallery.view.inputFieldsFragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;

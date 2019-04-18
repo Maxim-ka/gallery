@@ -1,8 +1,7 @@
-package reschikov.geekbrains.gallery.mainActivity;
+package reschikov.geekbrains.gallery.view.mainActivity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
@@ -10,24 +9,21 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.lifecycle.ViewModelProvider;
-import androidx.transition.ArcMotion;
-import androidx.transition.ChangeBounds;
-import reschikov.geekbrains.gallery.colorSelectionActivity.ColorThemeSelection;
+import reschikov.geekbrains.gallery.view.colorSelectionActivity.ColorThemeSelection;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
-import reschikov.geekbrains.gallery.mainActivity.fragments.pager.ViewPagerFragment;
-import reschikov.geekbrains.gallery.mainActivity.fragments.HomeFragment;
-import reschikov.geekbrains.gallery.mainActivity.fragments.NotificationsFragment;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.ViewPagerFragment;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.HomeFragment;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.NotificationsFragment;
 import reschikov.geekbrains.gallery.R;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Counted, Switchable{
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Counted{
 
     private int theme;
     private int counter;
@@ -79,22 +75,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 .commit();
     }
 
-    private void changeFragment(Fragment newFragment, View view, String tag) {
-        String transitionName = ViewCompat.getTransitionName(view);
-        if (transitionName == null) return;
-
-        ChangeBounds changeBounds = new ChangeBounds();
-        changeBounds.setDuration(1_000);
-        changeBounds.setPathMotion(new ArcMotion());
-        changeBounds.setInterpolator(new AccelerateDecelerateInterpolator());
-        changeBounds.setResizeClip(true);
-
-        newFragment.setSharedElementEnterTransition(changeBounds);
-
+    private void changeFragment(Fragment newFragment, String tag) {
         getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.animator.animator_enter, R.animator.animator_exit)
             .replace(R.id.frame_master, newFragment, tag)
-            .addSharedElement(view, transitionName)
             .commit();
     }
 
@@ -180,8 +164,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigation_home:
                 switch (tag){
                     case "Notifications":
-                        NotificationsFragment notificationsFragment = (NotificationsFragment) currentFragment;
-                        changeFragment(new HomeFragment(), notificationsFragment.getImage(),"Home");
+                        changeFragment(new HomeFragment(),"Home");
                         return true;
                     case "ViewPager":
                         loadFragment(new HomeFragment(), "Home");
@@ -196,8 +179,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigation_notifications:
                 switch (tag){
                     case "Home":
-                        HomeFragment homeFragment = (HomeFragment) currentFragment;
-                        changeFragment(new NotificationsFragment(), homeFragment.getImage(), "Notifications");
+                        changeFragment(new NotificationsFragment(), "Notifications");
                         return true;
                     case "ViewPager":
                         loadFragment(new NotificationsFragment(), "Notifications");
@@ -225,10 +207,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         counter = 0;
         badge.setText(null);
         notifications.removeView(viewBadge);
-    }
-
-    @Override
-    public void toggleFragments(int id) {
-        bottomNavigationView.setSelectedItemId(id);
     }
 }

@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.mainActivity;
+package reschikov.geekbrains.gallery.view.mainActivity;
 
 public interface Counted {
 

@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.mainActivity.fragments.pager.gallery;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

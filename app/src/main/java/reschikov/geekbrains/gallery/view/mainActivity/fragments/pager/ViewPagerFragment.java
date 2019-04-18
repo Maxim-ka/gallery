@@ -1,32 +1,46 @@
-package reschikov.geekbrains.gallery.mainActivity.fragments.pager;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.arellomobile.mvp.MvpAppCompatFragment;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.google.android.material.tabs.TabLayout;
-import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyViewModelMyImage;
-import reschikov.geekbrains.gallery.mainActivity.fragments.pager.gallery.GalleryFragment;
+import reschikov.geekbrains.gallery.presenter.PagerPresenter;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.GalleryFragment;
 
-public class ViewPagerFragment extends Fragment{
+public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
 
-    private ArrayList<String> listTitles = new ArrayList<>();
-    private View view;
+    @BindView(R.id.pages) ViewPager pager;
+    @BindView(R.id.tabs) TabLayout tabLayout;
+    private Unbinder unbinder;
     private FragmentAdapter fragmentAdapter;
-    private ViewPager pager;
+
+    @InjectPresenter
+    PagerPresenter presenter;
+
+    @ProvidePresenter
+    PagerPresenter providePresenter(){
+        return new PagerPresenter();
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_view_pager, container, false);
-        pager = view.findViewById(R.id.pages);
+        View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
+        unbinder = ButterKnife.bind(this, view);
         fragmentAdapter = new FragmentAdapter(getChildFragmentManager());
         fragmentAdapter.addGalleryFragment(new GalleryFragment());
         pager.setPageTransformer(true, new DepthTransformation());
@@ -36,32 +50,26 @@ public class ViewPagerFragment extends Fragment{
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null){
-            listTitles = savedInstanceState.getStringArrayList("listTitles");
-            setListFragment(listTitles);
-        }
         pager.setAdapter(fragmentAdapter);
-
-        TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(pager);
-
         if (getActivity() != null){
             MyViewModelMyImage modelMyImage =  new ViewModelProvider(getActivity(), new ViewModelProvider.NewInstanceFactory()).get(MyViewModelMyImage.class);
             modelMyImage.getMutableLiveData().observe(this, myImage -> {
-                if (myImage.isFavorite()) {
-                    fragmentAdapter.addFragment(myImage.getResource());
-                    listTitles.add(String.valueOf(myImage.getResource()));
-                } else {
-                    fragmentAdapter.deleteFragment(myImage.getResource());
-                    listTitles.remove(String.valueOf(myImage.getResource()));
-                }
-                pager.setOffscreenPageLimit(calculatePageLimit());
+                if (myImage.isFavorite()) presenter.add(myImage);
+                else presenter.del(myImage);
             });
         }
     }
 
-    private void setListFragment(ArrayList<String> listTitles){
-        fragmentAdapter.setListFragment(listTitles);
+    @Override
+    public void add(int id) {
+        fragmentAdapter.addFragment(id);
+        pager.setOffscreenPageLimit(calculatePageLimit());
+    }
+
+    @Override
+    public void del(int id) {
+        fragmentAdapter.deleteFragment(id);
         pager.setOffscreenPageLimit(calculatePageLimit());
     }
 
@@ -72,8 +80,8 @@ public class ViewPagerFragment extends Fragment{
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putStringArrayList("listTitles", listTitles);
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

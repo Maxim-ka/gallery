@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.inputFieldsFragment;
+package reschikov.geekbrains.gallery.view.inputFieldsFragment;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import reschikov.geekbrains.gallery.R;
 
-class FieldsFragment extends Fragment{
+public class FieldsFragment extends Fragment{
 
     private TextInputLayout loginInputLayout;
     private TextInputLayout passwordInputLayout;

@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.mainActivity.fragments.pager.gallery;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery;
 
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -6,22 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.google.android.material.chip.Chip;
-import java.util.Collections;
-import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyImage;
-import reschikov.geekbrains.gallery.data.MyViewModelMyImage;
+import reschikov.geekbrains.gallery.presenter.Bindable;
 
 class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
 
-    private final List<MyImage> list;
-    private MyViewModelMyImage modelMyImage;
+    private final Bindable bindable;
 
-    MyAdapterRecycleView(List<MyImage> list, MyViewModelMyImage modelMyImage) {
-        this.list = list;
-        this.modelMyImage = modelMyImage;
+    MyAdapterRecycleView(Bindable bindable) {
+        this.bindable = bindable;
     }
 
     @NonNull
@@ -33,64 +31,56 @@ class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
         parent.getDisplay().getMetrics(metricsB);
         float scope = (isPortrait) ? 0.3f : 0.5f;
         itemView.getLayoutParams().height = (int) (metricsB.heightPixels / metricsB.density * scope);
-        return new MyViewHolder(itemView, modelMyImage, this);
+        return new MyViewHolder(itemView, this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
-        MyImage myImage = list.get(position);
-        myViewHolder.bind(myImage);
+        bindable.bindView(myViewHolder, position);
     }
 
     @Override
     public int getItemCount() {
-        if (list == null) return 0;
-        return list.size();
+        return bindable.getItemCount();
     }
 
     void move(int fromPos, int toPos){
-        Collections.swap(list, fromPos, toPos);
+        bindable.move(fromPos, toPos);
         notifyItemMoved(fromPos, toPos);
     }
 
     @Override
     public void delete(int pos){
-        if (list.get(pos).isFavorite()){
-            list.get(pos).setFavorite(false);
-            modelMyImage.setValueLiveData(list.get(pos));
-        }
-        list.remove(pos);
+        bindable.delete(pos);
         notifyItemRemoved(pos);
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder{
+    static class MyViewHolder extends RecyclerView.ViewHolder implements Settable, Changeable {
 
-        private final ImageView imageView;
-        private final Chip chipFavorite;
-        private final Chip chipDelete;
-        private final MyViewModelMyImage modelMyImage;
+        @BindView(R.id.image) ImageView imageView;
+        @BindView(R.id.chip_favorite) Chip chipFavorite;
+        @BindView(R.id.chip_delete) Chip chipDelete;
 
-        MyViewHolder(@NonNull View itemView, MyViewModelMyImage modelMyImage, final Removing removing) {
+        MyViewHolder(@NonNull View itemView, final Removing removing) {
             super(itemView);
-            this.modelMyImage = modelMyImage;
-            imageView = itemView.findViewById(R.id.image);
-            chipFavorite = itemView.findViewById(R.id.chip_favorite);
-            chipDelete = itemView.findViewById(R.id.chip_delete);
+            ButterKnife.bind(this, itemView);
             chipDelete.setOnLongClickListener(v -> {
                 removing.delete(getAdapterPosition());
                 return true;
             });
         }
 
-        void bind(final MyImage myImage) {
+        @Override
+        public void bind(MyImage myImage, final Bindable bindable) {
             imageView.setImageResource(myImage.getResource());
             chipFavorite.setOnCheckedChangeListener(null);
+            chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> bindable.setFavorite(getAdapterPosition(), isChecked));
+        }
+
+        @Override
+        public void check(MyImage myImage) {
             chipFavorite.setChecked(myImage.isFavorite());
-            chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                myImage.setFavorite(isChecked);
-                modelMyImage.setValueLiveData(myImage);
-            });
         }
     }
 }
