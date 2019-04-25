@@ -24,23 +24,6 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
         notifyDataSetChanged();
     }
 
-    void addFragment(int resource) {
-        listFragment.add(FavoriteImageFragment.newInstance(resource));
-        listTitles.add(String.valueOf(resource));
-        notifyDataSetChanged();
-    }
-
-    void deleteFragment(int resource) {
-        for (int i = 1; i < listFragment.size(); i++) {
-            if (listFragment.get(i).getArguments().getInt("resource") == resource){
-                listFragment.remove(listFragment.get(i));
-                listTitles.remove(listTitles.get(i));
-                notifyDataSetChanged();
-                return;
-            }
-        }
-    }
-
     @NonNull
     @Override
     public Fragment getItem(int position) {
@@ -56,5 +39,23 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
     @Override
     public CharSequence getPageTitle(int position) {
         return listTitles.get(position);
+    }
+
+    void addFragment(int resource) {
+        listFragment.add(FavoriteImageFragment.newInstance(resource));
+        listTitles.add(String.valueOf(resource));
+        notifyDataSetChanged();
+    }
+
+    void delFragment(int resource) {
+    	String title = String.valueOf(resource);
+	    for (int i = 1; i < listFragment.size(); i++) {
+            if (listTitles.get(i).equals(title)){
+                listFragment.remove(listFragment.get(i));
+                listTitles.remove(listTitles.get(i));
+                break;
+            }
+        }
+	    notifyDataSetChanged();
     }
 }

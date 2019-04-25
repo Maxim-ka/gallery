@@ -9,4 +9,5 @@ public interface Bindable {
     void move(int fromPos, int toPos);
     void delete(int pos);
     void setFavorite(int pos, boolean isChecked);
+    void toSee(MyImage myImage);
 }

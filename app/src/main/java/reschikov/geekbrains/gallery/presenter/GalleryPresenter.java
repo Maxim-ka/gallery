@@ -1,7 +1,5 @@
 package reschikov.geekbrains.gallery.presenter;
 
-import android.util.Log;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
@@ -9,33 +7,54 @@ import java.util.Collections;
 import java.util.List;
 import reschikov.geekbrains.gallery.data.ListMyImage;
 import reschikov.geekbrains.gallery.data.MyImage;
-import reschikov.geekbrains.gallery.data.MyViewModelMyImage;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Settable;
-import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Changeable;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Watchable;
 
 @InjectViewState
-public class GalleryPresenter extends MvpPresenter<Changeable>{
+public class GalleryPresenter extends MvpPresenter<Watchable> implements Observable, Seen {
 
+	private Observer observer;
     private final List<MyImage> list;
-    private final MyViewModelMyImage modelMyImage;
     private final RecyclePresenter recyclePresenter;
 
-    public RecyclePresenter getRecyclePresenter() {
+	public RecyclePresenter getRecyclePresenter() {
         return recyclePresenter;
     }
 
-    public GalleryPresenter(MyViewModelMyImage modelMyImage) {
-        this.modelMyImage = modelMyImage;
+    public GalleryPresenter() {
         list = new ListMyImage().getMyImageList();
         recyclePresenter = new RecyclePresenter();
     }
 
-    private class RecyclePresenter implements Bindable{
+	@Override
+	public void subscribe(Observer observer) {
+		this.observer = observer;
+	}
+
+	@Override
+	public void unsubscribe() {
+		observer = null;
+	}
+
+	@Override
+	public void delete(MyImage myImage) {
+		int index = list.indexOf(myImage);
+		recyclePresenter.delete(index);
+		getViewState().delete(index);
+	}
+
+	@Override
+	public void setFavorite(MyImage myImage, boolean isChecked) {
+		int index = list.indexOf(myImage);
+		recyclePresenter.setFavorite(index, isChecked);
+		getViewState().check(index);
+	}
+
+	private class RecyclePresenter implements Bindable{
 
         @Override
         public void bindView(Settable settable, int position) {
            settable.bind(list.get(position), this);
-           getViewState().check(list.get(position));
         }
 
         @Override
@@ -47,26 +66,26 @@ public class GalleryPresenter extends MvpPresenter<Changeable>{
         @Override
         public void move(int fromPos, int toPos) {
             Collections.swap(list, fromPos, toPos);
-            Log.i("move", String.format("from %d to %d", fromPos, toPos));
         }
 
         @Override
         public void delete(int pos) {
-            if (list.get(pos).isFavorite()){
-                list.get(pos).setFavorite(false);
-                modelMyImage.setValueLiveData(list.get(pos));
-            }
-            Log.i("delete", String.valueOf(list.get(pos)));
-            list.remove(pos);
+        	MyImage myImage = list.get(pos);
+	        if (myImage.isFavorite()) observer.del(myImage);
+	        list.remove(myImage);
         }
 
         @Override
         public void setFavorite(int pos, boolean isChecked) {
-            MyImage myImage = list.get(pos);
-            myImage.setFavorite(isChecked);
-            modelMyImage.setValueLiveData(myImage);
-            getViewState().check(myImage);
-            Log.i("favorite", String.format("%d - %s", myImage.getResource(), myImage.isFavorite()));
+	        MyImage myImage = list.get(pos);
+	        myImage.setFavorite(isChecked);
+	        if (myImage.isFavorite()) observer.add(myImage);
+	        else observer.del(myImage);
         }
-    }
+
+		@Override
+		public void toSee(MyImage myImage) {
+			getViewState().toLook(myImage);
+		}
+	}
 }

@@ -56,7 +56,7 @@ class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
         notifyItemRemoved(pos);
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder implements Settable, Changeable {
+    static class MyViewHolder extends RecyclerView.ViewHolder implements Settable {
 
         @BindView(R.id.image) ImageView imageView;
         @BindView(R.id.chip_favorite) Chip chipFavorite;
@@ -72,15 +72,12 @@ class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
         }
 
         @Override
-        public void bind(MyImage myImage, final Bindable bindable) {
+        public void bind(final MyImage myImage, final Bindable bindable) {
             imageView.setImageResource(myImage.getResource());
+	        imageView.setOnClickListener(v -> bindable.toSee(myImage));
             chipFavorite.setOnCheckedChangeListener(null);
-            chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> bindable.setFavorite(getAdapterPosition(), isChecked));
-        }
-
-        @Override
-        public void check(MyImage myImage) {
             chipFavorite.setChecked(myImage.isFavorite());
+            chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> bindable.setFavorite(getAdapterPosition(), isChecked));
         }
     }
 }

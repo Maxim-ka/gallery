@@ -11,13 +11,11 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
-import reschikov.geekbrains.gallery.data.MyViewModelMyImage;
 import reschikov.geekbrains.gallery.presenter.PagerPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.GalleryFragment;
 
@@ -28,7 +26,7 @@ public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
     private Unbinder unbinder;
     private FragmentAdapter fragmentAdapter;
 
-    @InjectPresenter
+	@InjectPresenter
     PagerPresenter presenter;
 
     @ProvidePresenter
@@ -36,29 +34,25 @@ public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
         return new PagerPresenter();
     }
 
-    @Nullable
+	public PagerPresenter getPresenter() {
+		return presenter;
+	}
+
+	public FragmentAdapter getFragmentAdapter() {
+		return fragmentAdapter;
+	}
+
+	@Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
         unbinder = ButterKnife.bind(this, view);
-        fragmentAdapter = new FragmentAdapter(getChildFragmentManager());
+		fragmentAdapter = new FragmentAdapter(getChildFragmentManager());
         fragmentAdapter.addGalleryFragment(new GalleryFragment());
+	    pager.setAdapter(fragmentAdapter);
+	    tabLayout.setupWithViewPager(pager);
         pager.setPageTransformer(true, new DepthTransformation());
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        pager.setAdapter(fragmentAdapter);
-        tabLayout.setupWithViewPager(pager);
-        if (getActivity() != null){
-            MyViewModelMyImage modelMyImage =  new ViewModelProvider(getActivity(), new ViewModelProvider.NewInstanceFactory()).get(MyViewModelMyImage.class);
-            modelMyImage.getMutableLiveData().observe(this, myImage -> {
-                if (myImage.isFavorite()) presenter.add(myImage);
-                else presenter.del(myImage);
-            });
-        }
     }
 
     @Override
@@ -69,7 +63,7 @@ public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
 
     @Override
     public void del(int id) {
-        fragmentAdapter.deleteFragment(id);
+        fragmentAdapter.delFragment(id);
         pager.setOffscreenPageLimit(calculatePageLimit());
     }
 
