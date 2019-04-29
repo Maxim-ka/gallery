@@ -11,6 +11,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -39,10 +40,6 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 	GalleryPresenter providePresenter(){
 	    return new GalleryPresenter();
     }
-
-	public MyAdapterRecycleView getMyAdapter() {
-		return myAdapter;
-	}
 
 	@Nullable
     @Override
@@ -80,12 +77,6 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
     }
 
 	@Override
-	public void onDestroyView() {
-		super.onDestroyView();
-		presenter.unsubscribe();
-	}
-
-	@Override
 	public void delete(int pos) {
 		myAdapter.notifyItemRemoved(pos);
 	}
@@ -98,9 +89,17 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 	@Override
 	public void toLook(MyImage myImage) {
     	if (getActivity() == null) return;
-		getActivity().getSupportFragmentManager().beginTransaction()
-			.add(R.id.frame_master, ItemFragment.newInstance(myImage))
-			.addToBackStack("resource")
+		FragmentManager manager = getActivity().getSupportFragmentManager();
+		ItemFragment itemFragment = ItemFragment.newInstance(myImage);
+		manager.beginTransaction()
+			.add(R.id.frame_master, itemFragment)
+			.addToBackStack(null)
 			.commit();
+		itemFragment.setSeen(presenter);
+	}
+
+	@Override
+	public void updateRecyclerView() {
+		myAdapter.notifyDataSetChanged();
 	}
 }

@@ -1,11 +1,18 @@
 package reschikov.geekbrains.gallery.presenter;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
 import java.util.Collections;
 import java.util.List;
-import reschikov.geekbrains.gallery.data.ListMyImage;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import reschikov.geekbrains.gallery.data.Reply;
+import reschikov.geekbrains.gallery.data.Request;
 import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Settable;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Watchable;
@@ -14,17 +21,34 @@ import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Wa
 public class GalleryPresenter extends MvpPresenter<Watchable> implements Observable, Seen {
 
 	private Observer observer;
-    private final List<MyImage> list;
+    private List<MyImage> list;
     private final RecyclePresenter recyclePresenter;
+    private final Single<Reply> request;
 
 	public RecyclePresenter getRecyclePresenter() {
         return recyclePresenter;
     }
 
     public GalleryPresenter() {
-        list = new ListMyImage().getMyImageList();
-        recyclePresenter = new RecyclePresenter();
+	    recyclePresenter = new RecyclePresenter();
+	    request = new Request().toRequest();
     }
+
+	@Override
+	protected void onFirstViewAttach() {
+		Disposable disposable = request.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(reply -> {
+				list = reply.getHits();
+				getViewState().updateRecyclerView();
+				},
+				e -> Log.e("ServerError", e.getMessage()));
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unsubscribe();
+	}
 
 	@Override
 	public void subscribe(Observer observer) {

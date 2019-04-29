@@ -13,13 +13,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="?attr/colorAccent"
+        android:background="?attr/colorSecondary"
         android:text="Peek"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/colorPrimaryDark"
         android:text="Content"/>
 
 

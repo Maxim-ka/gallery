@@ -4,10 +4,12 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
+import reschikov.geekbrains.gallery.data.MyImage;
+
 
 public interface Selected extends MvpView {
     @StateStrategyType(AddToEndStrategy.class)
-    void add(int id);
+    void add(MyImage myImage);
     @StateStrategyType(AddToEndStrategy.class)
-    void del(int id);
+    void del(MyImage myImage);
 }

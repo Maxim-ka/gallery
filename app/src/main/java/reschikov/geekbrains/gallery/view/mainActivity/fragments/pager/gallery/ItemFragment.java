@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import butterknife.BindView;
@@ -19,15 +19,17 @@ import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.presenter.ItemPresenter;
+import reschikov.geekbrains.gallery.presenter.Seen;
 import reschikov.geekbrains.gallery.view.mainActivity.Retentive;
-import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.ViewPagerFragment;
 
 public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
+
+	private static final String KEY_MY_IMAGE = "keyMyImage";
 
 	static ItemFragment newInstance(MyImage myImage){
 		ItemFragment fragment = new ItemFragment();
 		Bundle args = new Bundle();
-		args.putParcelable("myImage", myImage);
+		args.putParcelable(KEY_MY_IMAGE, myImage);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -37,6 +39,11 @@ public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
 	@BindView(R.id.chip_delete) Chip chipDelete;
 	private MyImage myImage;
 	private Unbinder unbinder;
+	private Seen seen;
+
+	void setSeen(Seen seen) {
+		this.seen = seen;
+	}
 
 	@InjectPresenter
 	ItemPresenter presenter;
@@ -53,22 +60,17 @@ public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
 		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		unbinder = ButterKnife.bind(this, view);
 		if (getArguments() != null){
-			myImage = getArguments().getParcelable("myImage");
+			myImage = getArguments().getParcelable(KEY_MY_IMAGE);
 		}
 		if (myImage != null){
-			imageView.setImageResource(myImage.getResource());
+			Glide.with(this).load(myImage.getUrl()).into(imageView);
 			chipFavorite.setChecked(myImage.isFavorite());
+			presenter.setMyImage(myImage);
 		}
-		presenter.setMyImage(myImage);
-		if (getActivity() != null) {
-			ViewPagerFragment viewPager = (ViewPagerFragment) getActivity().getSupportFragmentManager().findFragmentByTag("ViewPager");
-			if (viewPager != null){
-				presenter.subscribe(((GalleryFragment) viewPager.getFragmentAdapter().getItem(0)).presenter);
-			}
-		}
+		if (seen != null) presenter.subscribe(seen);
 		chipDelete.setOnLongClickListener(v -> {
 			presenter.delete();
-			if (getActivity()!= null) {
+			if (getActivity() != null) {
 				getActivity().getSupportFragmentManager().popBackStack();
 			}
 			return true;
@@ -81,11 +83,5 @@ public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
 	public void onDestroyView() {
 		super.onDestroyView();
 		unbinder.unbind();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		presenter.unsubscribe();
 	}
 }

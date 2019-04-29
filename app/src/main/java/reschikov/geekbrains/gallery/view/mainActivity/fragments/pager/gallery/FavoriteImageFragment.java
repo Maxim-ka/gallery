@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -16,16 +18,18 @@ import reschikov.geekbrains.gallery.R;
 
 public class FavoriteImageFragment extends Fragment {
 
-    public static FavoriteImageFragment newInstance(int resource){
+	private static final String KEY_URL = "keyUrl";
+
+	public static FavoriteImageFragment newInstance(String url){
         FavoriteImageFragment fragment = new FavoriteImageFragment();
         Bundle args = new Bundle();
-        args.putInt("resource", resource);
+        args.putString(KEY_URL, url);
         fragment.setArguments(args);
         return fragment;
     }
 
     @BindView(R.id.image_view) AppCompatImageView imageView;
-    private int resource;
+    private String url;
     private Unbinder unbinder;
 
     @Nullable
@@ -33,20 +37,11 @@ public class FavoriteImageFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite_image, container, false);
 	    unbinder = ButterKnife.bind(this, view);
-        if (savedInstanceState == null && getArguments() != null){
-            resource = getArguments().getInt("resource");
+        if (getArguments() != null){
+            url = getArguments().getString(KEY_URL);
         }
-        if (savedInstanceState != null){
-            resource = savedInstanceState.getInt("resource");
-        }
-        imageView.setImageResource(resource);
+	    Glide.with(this).load(url).into(imageView);
         return view;
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("resource", resource);
     }
 
 	@Override

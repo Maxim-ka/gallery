@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.FavoriteImageFragment;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.GalleryFragment;
 
@@ -41,14 +42,14 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
         return listTitles.get(position);
     }
 
-    void addFragment(int resource) {
-        listFragment.add(FavoriteImageFragment.newInstance(resource));
-        listTitles.add(String.valueOf(resource));
+    void addFragment(MyImage myImage) {
+        listFragment.add(FavoriteImageFragment.newInstance(myImage.getUrl()));
+        listTitles.add(String.valueOf(myImage.getId()));
         notifyDataSetChanged();
     }
 
-    void delFragment(int resource) {
-    	String title = String.valueOf(resource);
+    void delFragment(MyImage myImage) {
+    	String title = String.valueOf(myImage.getId());
 	    for (int i = 1; i < listFragment.size(); i++) {
             if (listTitles.get(i).equals(title)){
                 listFragment.remove(listFragment.get(i));

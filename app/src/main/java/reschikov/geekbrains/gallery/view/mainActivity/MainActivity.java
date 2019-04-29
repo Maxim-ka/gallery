@@ -11,8 +11,8 @@ import android.os.Bundle;
 import androidx.lifecycle.ViewModelProvider;
 import reschikov.geekbrains.gallery.view.colorSelectionActivity.ColorThemeSelection;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment.FieldsFragment;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.ViewPagerFragment;
-import reschikov.geekbrains.gallery.view.mainActivity.fragments.HomeFragment;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.NotificationsFragment;
 import reschikov.geekbrains.gallery.R;
 import android.view.LayoutInflater;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         badge = viewBadge.findViewById(R.id.text_badge);
 
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment(), "Home");
+            loadFragment(new FieldsFragment(), "Home");
         }
 
         boolean isPortrait = getResources().getBoolean(R.bool.is_portrait);
@@ -164,10 +164,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.navigation_home:
                 switch (tag){
                     case "Notifications":
-                        changeFragment(new HomeFragment(),"Home");
+                        changeFragment(new FieldsFragment(),"Home");
                         return true;
                     case "ViewPager":
-                        loadFragment(new HomeFragment(), "Home");
+                        loadFragment(new FieldsFragment(), "Home");
                         return true;
                     default:
                         return false;

@@ -17,6 +17,7 @@
         android:layout_margin="16dp"
         app:srcCompat="@drawable/ic_autorenew_white_24dp"
         app:tint="@android:color/white"
+        app:backgroundTint="?attr/colorAccent"
         app:layout_anchor = "@id/bottom_sheet"
         app:layout_anchorGravity = "top|end"
         app:fabSize="auto"

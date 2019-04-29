@@ -1,9 +1,9 @@
-package reschikov.geekbrains.gallery.view.inputFieldsFragment;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 
-class MyAdapterTextWatcher implements TextWatcher {
+public class MyAdapterTextWatcher implements TextWatcher {
 
 
     @Override

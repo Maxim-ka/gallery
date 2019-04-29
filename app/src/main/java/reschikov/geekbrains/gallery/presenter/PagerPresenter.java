@@ -10,11 +10,11 @@ public class PagerPresenter extends MvpPresenter<Selected> implements Observer {
 
 	@Override
     public void add(MyImage myImage){
-        getViewState().add(myImage.getResource());
+        getViewState().add(myImage);
     }
 
     @Override
     public void del(MyImage myImage){
-        getViewState().del(myImage.getResource());
+        getViewState().del(myImage);
     }
 }

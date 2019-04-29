@@ -1,8 +1,11 @@
 package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery;
 
 import com.arellomobile.mvp.MvpView;
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 import reschikov.geekbrains.gallery.data.MyImage;
@@ -12,6 +15,8 @@ public interface Watchable extends MvpView {
     void delete(int pos);
     @StateStrategyType(SingleStateStrategy.class)
     void check(int pos);
-	@StateStrategyType(SingleStateStrategy.class)
+	@StateStrategyType(SkipStrategy.class)
 	void toLook(MyImage myImage);
+	@StateStrategyType(SkipStrategy.class)
+	void updateRecyclerView();
 }

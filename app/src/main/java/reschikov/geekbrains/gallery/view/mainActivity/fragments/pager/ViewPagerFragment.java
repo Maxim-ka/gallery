@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.presenter.PagerPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.GalleryFragment;
 
@@ -38,10 +39,6 @@ public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
 		return presenter;
 	}
 
-	public FragmentAdapter getFragmentAdapter() {
-		return fragmentAdapter;
-	}
-
 	@Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,14 +53,14 @@ public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
     }
 
     @Override
-    public void add(int id) {
-        fragmentAdapter.addFragment(id);
+    public void add(MyImage myImage) {
+        fragmentAdapter.addFragment(myImage);
         pager.setOffscreenPageLimit(calculatePageLimit());
     }
 
     @Override
-    public void del(int id) {
-        fragmentAdapter.delFragment(id);
+    public void del(MyImage myImage) {
+        fragmentAdapter.delFragment(myImage);
         pager.setOffscreenPageLimit(calculatePageLimit());
     }
 

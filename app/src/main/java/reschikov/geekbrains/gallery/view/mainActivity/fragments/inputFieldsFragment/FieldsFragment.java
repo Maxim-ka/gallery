@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.view.inputFieldsFragment;
+package reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;

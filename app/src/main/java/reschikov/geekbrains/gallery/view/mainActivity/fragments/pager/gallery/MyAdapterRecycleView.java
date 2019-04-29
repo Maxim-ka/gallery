@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,7 +75,7 @@ class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
 
         @Override
         public void bind(final MyImage myImage, final Bindable bindable) {
-            imageView.setImageResource(myImage.getResource());
+	        Glide.with(imageView.getContext()).load(myImage.getPreview()).into(imageView);
 	        imageView.setOnClickListener(v -> bindable.toSee(myImage));
             chipFavorite.setOnCheckedChangeListener(null);
             chipFavorite.setChecked(myImage.isFavorite());

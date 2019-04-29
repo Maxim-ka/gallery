@@ -1,7 +1,5 @@
 package reschikov.geekbrains.gallery.presenter;
 
-import android.util.Log;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
@@ -30,7 +28,13 @@ public class ItemPresenter extends MvpPresenter<Retentive> {
 		this.seen = seen;
 	}
 
-	public void unsubscribe() {
+	private void unsubscribe() {
 		seen = null;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		unsubscribe();
 	}
 }

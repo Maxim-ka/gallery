@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="reschikov.geekbrains.gallery">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
