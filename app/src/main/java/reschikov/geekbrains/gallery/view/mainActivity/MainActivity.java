@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void changeFragment(Fragment newFragment, String tag) {
         getSupportFragmentManager().beginTransaction()
-            .setCustomAnimations(R.animator.animator_enter, R.animator.animator_exit)
+//            .setCustomAnimations(R.animator.animator_enter, R.animator.animator_exit)
             .replace(R.id.frame_master, newFragment, tag)
             .commit();
     }
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (!isPortrait && spanCount != 2) return false;
         modelSpanCount.setValueLiveData(spanCount);
         if (!"ViewPager".equals(tag)){
-            loadFragment(new ViewPagerFragment(), "ViewPager");
+            changeFragment(new ViewPagerFragment(), "ViewPager");
         }
         return true;
     }
@@ -162,31 +162,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (tag == null) return false;
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                switch (tag){
-                    case "Notifications":
-                        changeFragment(new FieldsFragment(),"Home");
-                        return true;
-                    case "ViewPager":
-                        loadFragment(new FieldsFragment(), "Home");
-                        return true;
-                    default:
-                        return false;
-                }
+	            changeFragment(new FieldsFragment(),"Home");
+	            return true;
             case R.id.navigation_gallery_list:
                 return loadGallery(tag, 1);
             case R.id.navigation_gallery_grid:
                 return loadGallery(tag, 2);
             case R.id.navigation_notifications:
-                switch (tag){
-                    case "Home":
-                        changeFragment(new NotificationsFragment(), "Notifications");
-                        return true;
-                    case "ViewPager":
-                        loadFragment(new NotificationsFragment(), "Notifications");
-                        return true;
-                    default:
-                        return false;
-                }
+	            changeFragment(new NotificationsFragment(), "Notifications");
+	            return true;
             case R.id.navigation_setting:
                 startActivity(new Intent(getBaseContext(), ColorThemeSelection.class));
                 return true;

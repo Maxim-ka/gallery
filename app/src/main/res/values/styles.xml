@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimaryTh0</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTh0</item>
         <item name="colorAccent">@color/colorAccentTh0</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
     </style>
 

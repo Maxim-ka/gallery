@@ -3,19 +3,33 @@ package reschikov.geekbrains.gallery.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.SerializedName;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+@Entity(tableName = "table_myImage")
 public class MyImage implements Parcelable {
 
+	@PrimaryKey(autoGenerate = true)
+	@ColumnInfo(name = "id")
+	private transient long rowId;
+
+	@ColumnInfo(name = "id_image")
 	@SerializedName("id")
 	private int id;
 
+	@ColumnInfo(name = "webformatURL")
 	@SerializedName("webformatURL")
     private String url;
 
+	@ColumnInfo(name = "previewURL")
 	@SerializedName("previewURL")
     private String preview;
 
+	@Ignore
     private boolean favorite;
 
 	public static final Creator<MyImage> CREATOR = new Creator<MyImage>() {
@@ -29,6 +43,14 @@ public class MyImage implements Parcelable {
 			return new MyImage[size];
 		}
 	};
+
+	public long getRowId() {
+		return rowId;
+	}
+
+	public void setRowId(long rowId) {
+		this.rowId = rowId;
+	}
 
 	public int getId() {
 		return id;
@@ -62,6 +84,8 @@ public class MyImage implements Parcelable {
 		this.favorite = favorite;
 	}
 
+	public MyImage() {}
+
 	private MyImage(Parcel in) {
 		id = in.readInt();
         url = in.readString();
@@ -80,5 +104,12 @@ public class MyImage implements Parcelable {
 		dest.writeString(url);
 		dest.writeString(preview);
 		dest.writeByte((byte) (favorite ? 1 : 0));
+	}
+
+	@Override
+	public boolean equals(@Nullable Object obj) {
+		if (!(obj instanceof  MyImage)) return false;
+		MyImage image = (MyImage) obj;
+		return id == image.id;
 	}
 }
