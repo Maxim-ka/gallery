@@ -5,16 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
+
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.data.dagger.AppDagger;
+import reschikov.geekbrains.gallery.data.net.ImageUploader;
 
 public class FavoriteImageFragment extends Fragment {
 
@@ -32,15 +35,19 @@ public class FavoriteImageFragment extends Fragment {
     private String url;
     private Unbinder unbinder;
 
+    @Inject
+    ImageUploader imageUploader;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite_image, container, false);
 	    unbinder = ButterKnife.bind(this, view);
+	    AppDagger.getAppDagger().getAppComponent().inject(this);
         if (getArguments() != null){
             url = getArguments().getString(KEY_URL);
         }
-	    Glide.with(this).load(url).into(imageView);
+	    imageUploader.download(imageView, url);
         return view;
     }
 

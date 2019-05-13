@@ -23,7 +23,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Counted{
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Changing, Counted{
 
     private int theme;
     private int counter;
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         badge = viewBadge.findViewById(R.id.text_badge);
 
         if (savedInstanceState == null) {
-            loadFragment(new FieldsFragment(), "Home");
+            loadFragment(new FieldsFragment(), "Tag_Home");
         }
 
         boolean isPortrait = getResources().getBoolean(R.bool.is_portrait);
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         String tag = currentFragment.getTag();
         if (tag == null) return;
         switch (tag){
-            case "Home":
+            case "Tag_Home":
                 if (bottomNavigationView.getSelectedItemId() != R.id.navigation_home) bottomNavigationView.getMenu().findItem(R.id.navigation_home).setChecked(true);
                 break;
             case "ViewPager":
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         outState.putInt("counter", counter);
     }
 
-    private boolean loadGallery(String tag, int spanCount){
+    public boolean loadGallery(String tag, int spanCount){
         if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_list && spanCount == 1) return false;
         if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_grid && spanCount == 2) return false;
         if (!isPortrait && spanCount != 2) return false;
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (tag == null) return false;
         switch (item.getItemId()) {
             case R.id.navigation_home:
-	            changeFragment(new FieldsFragment(),"Home");
+	            changeFragment(new FieldsFragment(),"Tag_Home");
 	            return true;
             case R.id.navigation_gallery_list:
                 return loadGallery(tag, 1);
@@ -192,4 +192,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         badge.setText(null);
         notifications.removeView(viewBadge);
     }
+
+	@Override
+	public void toggleFragments(int id) {
+		bottomNavigationView.setSelectedItemId(id);
+	}
 }

@@ -5,18 +5,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyImage;
+import reschikov.geekbrains.gallery.data.dagger.AppDagger;
+import reschikov.geekbrains.gallery.data.net.ImageUploader;
 import reschikov.geekbrains.gallery.presenter.Bindable;
 
-class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
+public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
 
     private final Bindable bindable;
 
@@ -58,15 +59,18 @@ class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
         notifyItemRemoved(pos);
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder implements Settable {
+    public static class MyViewHolder extends RecyclerView.ViewHolder implements Settable {
 
         @BindView(R.id.image) ImageView imageView;
         @BindView(R.id.chip_favorite) Chip chipFavorite;
         @BindView(R.id.chip_delete) Chip chipDelete;
+        @Inject
+        ImageUploader imageUploader;
 
         MyViewHolder(@NonNull View itemView, final Removing removing) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+	        AppDagger.getAppDagger().getAppComponent().inject(this);
             chipDelete.setOnLongClickListener(v -> {
                 removing.delete(getAdapterPosition());
                 return true;
@@ -75,7 +79,7 @@ class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
 
         @Override
         public void bind(final MyImage myImage, final Bindable bindable) {
-	        Glide.with(imageView.getContext()).load(myImage.getPreview()).into(imageView);
+	        imageUploader.download(imageView, myImage.getPreview());
 	        imageView.setOnClickListener(v -> bindable.toSee(myImage));
             chipFavorite.setOnCheckedChangeListener(null);
             chipFavorite.setChecked(myImage.isFavorite());

@@ -13,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme0"
-        android:name=".data.database.AppDataBase"
+        android:name=".data.dagger.AppDagger"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".view.mainActivity.MainActivity"
             android:windowSoftInputMode="stateHidden">

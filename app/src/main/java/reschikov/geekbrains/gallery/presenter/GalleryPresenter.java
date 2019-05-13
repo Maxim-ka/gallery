@@ -1,23 +1,14 @@
 package reschikov.geekbrains.gallery.presenter;
 
-import android.util.Log;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import reschikov.geekbrains.gallery.data.Reply;
-import reschikov.geekbrains.gallery.data.Request;
+import javax.inject.Inject;
+import reschikov.geekbrains.gallery.data.Data;
 import reschikov.geekbrains.gallery.data.MyImage;
-import reschikov.geekbrains.gallery.data.database.AppDataBase;
-import reschikov.geekbrains.gallery.data.database.MyImageDao;
+import reschikov.geekbrains.gallery.data.dagger.AppDagger;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Settable;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Watchable;
 
@@ -25,79 +16,23 @@ import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Wa
 public class GalleryPresenter extends MvpPresenter<Watchable> implements Observable, Seen {
 
 	private Observer observer;
-    private final List<MyImage> list = new ArrayList<>();
+    private final List<MyImage> list;
     private final RecyclePresenter recyclePresenter;
-    private final MyImageDao myImageDao;
-    private final Single<Reply> request;
+
+    @Inject
+    Data data;
 
 	public RecyclePresenter getRecyclePresenter() {
         return recyclePresenter;
     }
 
     public GalleryPresenter() {
+		AppDagger.getAppDagger().getAppComponent().inject(this);
 	    recyclePresenter = new RecyclePresenter();
-	    myImageDao = AppDataBase.getDatabase().getMyImageDao();
-		loadFromDatabase();
-	    request = new Request().toRequest();
+	    list = data.getImageList();
     }
 
-    private void loadFromDatabase(){
-		Disposable disposable = myImageDao.getAll()
-			.subscribeOn(Schedulers.io())
-			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(myImages -> {
-				for (int i = 0; i < myImages.size() ; i++) {
-					myImages.get(i).setFavorite(true);
-					list.add(myImages.get(i));
-					observer.add(myImages.get(i));
-				}
-				Log.i("loadFromDatabase: ", "загрузка базы");
-			}, e -> Log.e("loadFromDatabase: ", e.getMessage()));
-    }
-
-	@Override
-	protected void onFirstViewAttach() {
-		Disposable disposable = request.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(reply -> {
-				List<MyImage> hits = reply.getHits();
-				Log.i("onFirstViewAttach: ", "загрузка с интернета");
-				if (list.isEmpty()) list.addAll(hits);
-				else checkForMatch(hits);
-				Log.i("onFirstViewAttach: ", "совмещение с базой");
-				getViewState().updateRecyclerView();
-				},
-				e -> Log.e("ServerError", e.getMessage()));
-	}
-
-	private void checkForMatch(List<MyImage> hits){
-		List<MyImage> temp = new ArrayList<>(list);
-		label: for (int i = 0; i < hits.size(); i++) {
-			for (int j = 0; j < temp.size() ; j++) {
-				if (temp.get(j).equals(hits.get(i))){
-					temp.remove(j);
-					continue label;
-				}
-			}
-			list.add(hits.get(i));
-		}
-	}
-
-	private void removeListMyImages(List<MyImage> list){
-		Disposable disposable = myImageDao.delete(list)
-			.subscribeOn(Schedulers.io())
-			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe();
-	}
-
-	private void insertListMyImages(List<MyImage> list){
-		Disposable disposable = myImageDao.insert(list)
-			.subscribeOn(Schedulers.io())
-			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(() -> Log.i("insertMyImage: ", "добавлено "),
-				e -> Log.e("insertMyImage: ", e.getMessage()));
-	}
-
-	private void syncDataBase(){
+	private void syncData(){
 		List<MyImage> removable = new ArrayList<>();
 		List<MyImage> added = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
@@ -107,21 +42,24 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
 			}
 			if (list.get(i).getRowId() == 0 && list.get(i).isFavorite()) added.add(list.get(i));
 		}
-		if (!removable.isEmpty()) removeListMyImages(removable);
-		if (!added.isEmpty()) insertListMyImages(added);
+		if (!removable.isEmpty()) data.removeListMyImages(removable);
+		if (!added.isEmpty()) data.insertListMyImages(added);
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		Log.i("onDestroy: ", "onDestroy()");
-		syncDataBase();
+		syncData();
 		unsubscribe();
+		data = null;
 	}
 
 	@Override
 	public void subscribe(Observer observer) {
 		this.observer = observer;
+		for (int i = 0; i < list.size(); i++) {
+			if (list.get(i).isFavorite())  observer.add(list.get(i));
+		}
 	}
 
 	@Override
@@ -141,13 +79,6 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
 		int index = list.indexOf(myImage);
 		recyclePresenter.setFavorite(index, isChecked);
 		getViewState().check(index);
-	}
-
-	private void removeFromDatabase(MyImage myImage){
-		Disposable disposable = myImageDao.delete(myImage)
-			.subscribeOn(Schedulers.io())
-			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe();
 	}
 
 	private class RecyclePresenter implements Bindable{
@@ -171,7 +102,7 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
         public void delete(int pos) {
         	MyImage myImage = list.get(pos);
 	        if (myImage.isFavorite()) observer.del(myImage);
-	        if (myImage.getRowId() != 0) removeFromDatabase(myImage);
+	        if (myImage.getRowId() != 0) data.removeFromDatabase(myImage);
 	        list.remove(myImage);
         }
 

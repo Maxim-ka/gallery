@@ -29,10 +29,6 @@ public class SelectionParameter implements Parcelable {
 		return parameter;
 	}
 
-	public void setParameter(String parameter) {
-		this.parameter = parameter;
-	}
-
 	public boolean isSelected() {
 		return selected;
 	}
@@ -43,7 +39,6 @@ public class SelectionParameter implements Parcelable {
 
 	public SelectionParameter(String parameter) {
 		this.parameter = parameter;
-		selected = true;
 	}
 
 	@Override
