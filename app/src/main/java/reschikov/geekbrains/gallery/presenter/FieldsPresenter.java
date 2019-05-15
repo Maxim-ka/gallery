@@ -64,7 +64,6 @@ public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectab
 					Log.i("onFirstViewAttach: ", "загрузка с интернета");
 					getViewState().showReply();
 					AppDagger.getAppDagger().clearRequestComponent();
-					data = null;
 				},
 				e -> Log.e("ServerError", e.getMessage()));
 	}

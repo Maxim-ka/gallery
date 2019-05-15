@@ -1,7 +1,6 @@
 package reschikov.geekbrains.gallery.data.dagger;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import javax.inject.Named;
 import dagger.Module;
@@ -15,19 +14,11 @@ class PreferenceRequestApiPixaBayModule {
 	private final String[] types;
 	private final String[] orientations;
 	private final String[] categories;
-	private SharedPreferences sharedPreferences;
 
 	PreferenceRequestApiPixaBayModule(Context context) {
 		types = context.getResources().getStringArray(R.array.image_type);
 		orientations = context.getResources().getStringArray(R.array.orientation);
 		categories = context.getResources().getStringArray(R.array.category);
-		sharedPreferences = context.getSharedPreferences("RequestApiPixaBay", Context.MODE_PRIVATE);
-	}
-
-	@RequestScope
-	@Provides
-	SharedPreferences getSharedPreferences(){
-		return sharedPreferences;
 	}
 
 	@Named("types")

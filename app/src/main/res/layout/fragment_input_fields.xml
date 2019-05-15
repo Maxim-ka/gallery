@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -11,13 +11,9 @@
         android:id="@+id/what_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:hint="what to look for"
         style="@style/inputFieldOutlinedBox"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/type"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
         app:counterEnabled="true"
         app:counterMaxLength="100"
         app:counterTextAppearance="@style/TextAppearance.MaterialComponents.Body1"
@@ -27,86 +23,119 @@
         app:helperTextTextAppearance="@style/TextAppearance.MaterialComponents.Body1"
         app:endIconMode="custom"
         app:errorEnabled="true"
-        app:errorTextColor="?attr/colorAccent" >
+        app:errorTextColor="?attr/colorAccent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/what"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textAutoCorrect"
+            android:inputType="textMultiLine|textAutoCorrect"
             android:paddingTop="24dp"
-            android:lines="2"/>
+            android:maxLength="100"  />
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <View
+    <LinearLayout
         android:id="@+id/type"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_margin="8dp"
-        android:background="@android:drawable/divider_horizontal_textfield"
-        app:layout_constraintTop_toBottomOf="@id/what_layout"
-        app:layout_constraintBottom_toTopOf="@id/choice_type"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/choice_type"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textAllCaps="false"
-        android:background="@android:drawable/btn_dropdown"
-        app:layout_constraintTop_toBottomOf="@id/type"
-        app:layout_constraintBottom_toTopOf="@id/orientation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:orientation="vertical"
+        android:background="@drawable/form_separator"
+        android:layout_margin="8dp" >
 
-    <View
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="type"
+            android:gravity="center"
+            android:layout_marginTop="4dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/choice_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:textAllCaps="false"
+            android:background="@android:drawable/btn_dropdown"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/orientation"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_margin="8dp"
-        android:background="@android:drawable/divider_horizontal_textfield"
-        app:layout_constraintTop_toBottomOf="@id/choice_type"
-        app:layout_constraintBottom_toTopOf="@id/choice_orientation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/choice_orientation"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textAllCaps="false"
-        android:background="@android:drawable/btn_dropdown"
-        app:layout_constraintTop_toBottomOf="@id/orientation"
-        app:layout_constraintBottom_toTopOf="@id/category"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:orientation="vertical"
+        android:background="@drawable/form_separator"
+        android:layout_margin="8dp">
 
-    <View
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="orientation"
+            android:gravity="center"
+            android:layout_marginTop="4dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/choice_orientation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:textAllCaps="false"
+            android:background="@android:drawable/btn_dropdown" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/category"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="8dp"
-        android:background="@android:drawable/divider_horizontal_textfield"
-        app:layout_constraintTop_toBottomOf="@id/choice_orientation"
-        app:layout_constraintBottom_toTopOf="@id/choice_category"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/form_separator"
+        android:layout_margin="8dp">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/choice_category"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="category"
+            android:gravity="center"
+            android:layout_marginTop="4dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/choice_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:lines="2"
+            android:textAllCaps="false"
+            android:background="@android:drawable/btn_dropdown"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/per_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:lines="3"
-        android:textAllCaps="false"
-        android:background="@android:drawable/btn_dropdown"
-        app:layout_constraintTop_toBottomOf="@id/category"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:orientation="vertical"
+        android:background="@drawable/form_separator"
+        android:layout_margin="8dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="number on page"
+            android:gravity="center"
+            android:layout_marginTop="4dp"/>
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/choice_per_page"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@android:drawable/btn_dropdown">
+
+        </androidx.appcompat.widget.AppCompatSpinner>
+
+    </LinearLayout>
+
+</LinearLayout>

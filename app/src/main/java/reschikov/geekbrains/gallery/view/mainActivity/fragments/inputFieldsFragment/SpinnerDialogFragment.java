@@ -55,7 +55,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 			if (getDialog() != null) getDialog().setTitle(title);
 			SelectionParameter[] parameters = (SelectionParameter[]) getArguments().getParcelableArray("parameters");
 			if (getContext() != null && parameters != null){
-				if (parameters.length > 6) scope = 0.8f;
+				if (parameters.length > 6) scope = 0.85f;
 				listView.setAdapter(new MyAdapterSpinner(getContext(), android.R.layout.select_dialog_multichoice, parameters));
 			}
 		}
@@ -132,7 +132,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 		selectable = null;
 	}
 
-	private class MyAdapterSpinner extends ArrayAdapter<SelectionParameter> {
+	private static class MyAdapterSpinner extends ArrayAdapter<SelectionParameter> {
 
 		MyAdapterSpinner(@NonNull Context context, int resource, @NonNull SelectionParameter[] objects) {
 			super(context, resource, objects);

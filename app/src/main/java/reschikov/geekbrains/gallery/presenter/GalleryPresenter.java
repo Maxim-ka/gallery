@@ -51,7 +51,6 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
 		super.onDestroy();
 		syncData();
 		unsubscribe();
-		data = null;
 	}
 
 	@Override
