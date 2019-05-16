@@ -15,7 +15,7 @@ import reschikov.geekbrains.gallery.data.database.MyImageDao;
 
 public class Data {
 
-	private final List<MyImage> imageList = new ArrayList<>();
+	private List<MyImage> imageList = new ArrayList<>();
 
 	@Inject
 	MyImageDao myImageDao;
@@ -25,11 +25,13 @@ public class Data {
 	}
 
 	public Data() {
-		AppDagger.getAppDagger().getAppComponent().inject(this);
-		loadFromDatabase();
+		if (AppDagger.getAppDagger() != null){
+			AppDagger.getAppDagger().getAppComponent().inject(this);
+			loadFromDatabase();
+		}
 	}
 
-	public void removeFromDatabase(final MyImage myImage){
+	public void removeFromDatabase(MyImage myImage){
 		Disposable disposable = myImageDao.delete(myImage)
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
@@ -68,7 +70,7 @@ public class Data {
 		}
 	}
 
-	private void loadFromDatabase(){
+	public void loadFromDatabase(){
 		Disposable disposable = myImageDao.getAll()
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
@@ -77,7 +79,7 @@ public class Data {
 					myImages.get(i).setFavorite(true);
 					imageList.add(myImages.get(i));
 				}
-				Log.i("loadFromDatabase: ", "загрузка базы");
+//				Log.i("loadFromDatabase: ", "загрузка базы");
 			}, e -> Log.e("loadFromDatabase: ", e.getMessage()));
 	}
 }
