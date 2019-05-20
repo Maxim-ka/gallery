@@ -6,6 +6,7 @@ import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 import reschikov.geekbrains.gallery.data.Reply;
 import reschikov.geekbrains.gallery.data.dagger.AppDagger;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 
 public class RequestApiPixaBay {
@@ -17,7 +18,7 @@ public class RequestApiPixaBay {
 	private String type;
 	private String orientation;
 	private String category;
-	private int perPage = 10;
+	private int perPage;
 
 	public void setQ(String q) {
 		this.q = q;
@@ -44,7 +45,7 @@ public class RequestApiPixaBay {
 		derivable = retrofit.create(ApiPixaBayDerivable.class);
 	}
 
-	public Single<Reply> toRequest(){
+	public Single<Response<Reply>> toRequest(){
 		String lang = Locale.getDefault().getLanguage();
 		return (derivable.getListImage(KEY_PIXABAY, q, lang, type, orientation, category, perPage)).subscribeOn(Schedulers.io());
 	}

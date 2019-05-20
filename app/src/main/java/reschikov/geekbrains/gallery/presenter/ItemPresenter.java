@@ -1,5 +1,7 @@
 package reschikov.geekbrains.gallery.presenter;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
@@ -17,7 +19,9 @@ public class ItemPresenter extends MvpPresenter<Retentive> {
 	}
 
 	public void delete(){
+		Log.i("ItemPresenter delete: ", String.valueOf(myImage.getId()));
 		seen.delete(myImage);
+		unsubscribe();
 	}
 
 	public void setFavorite(boolean isChecked){
@@ -30,11 +34,5 @@ public class ItemPresenter extends MvpPresenter<Retentive> {
 
 	private void unsubscribe() {
 		seen = null;
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		unsubscribe();
 	}
 }

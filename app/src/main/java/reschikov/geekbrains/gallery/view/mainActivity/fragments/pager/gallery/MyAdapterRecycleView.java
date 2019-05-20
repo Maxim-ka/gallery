@@ -80,7 +80,7 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removi
         @Override
         public void bind(final MyImage myImage, final Bindable bindable) {
 	        imageUploader.download(imageView, myImage.getPreview());
-	        imageView.setOnClickListener(v -> bindable.toSee(myImage));
+	        imageView.setOnClickListener(v -> bindable.toSee(getAdapterPosition()));
             chipFavorite.setOnCheckedChangeListener(null);
             chipFavorite.setChecked(myImage.isFavorite());
             chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> bindable.setFavorite(getAdapterPosition(), isChecked));

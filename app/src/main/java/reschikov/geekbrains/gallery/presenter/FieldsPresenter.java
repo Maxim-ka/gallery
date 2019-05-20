@@ -1,5 +1,4 @@
 package reschikov.geekbrains.gallery.presenter;
-import android.util.Log;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
@@ -7,6 +6,7 @@ import javax.inject.Named;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import reschikov.geekbrains.gallery.Rule;
 import reschikov.geekbrains.gallery.data.Data;
 import reschikov.geekbrains.gallery.data.Reply;
 import reschikov.geekbrains.gallery.data.SelectionParameter;
@@ -14,6 +14,7 @@ import reschikov.geekbrains.gallery.data.dagger.AppDagger;
 import reschikov.geekbrains.gallery.data.net.RequestApiPixaBay;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment.Displayed;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment.Selectable;
+import retrofit2.Response;
 
 @InjectViewState
 public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectable {
@@ -34,6 +35,7 @@ public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectab
 	private String queryTypes;
 	private String queryOrientations;
 	private String queryCategories;
+	private int number = Rule.DEFAULT_PER_PAGE;
 
 	public SelectionParameter[] getTypes() {
 		return types;
@@ -47,25 +49,34 @@ public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectab
 		return categories;
 	}
 
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
 	public FieldsPresenter() {
 		AppDagger.getAppDagger().createRequestComponent().inject(this);
 		data = AppDagger.getAppDagger().getAppComponent().getData();
 	}
 
 	public void sendRequest(String what){
+		data.reload();
 		if (what != null && !what.equals("")) request.setQ(what);
 		if (queryTypes != null) request.setType(queryTypes);
 		if (queryOrientations != null) request.setOrientation(queryOrientations);
 		if (queryCategories != null) request.setCategory(queryCategories);
-		Single<Reply> response = request.toRequest();
-		Disposable disposable = response.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(reply -> {
-					data.downloadServer(reply.getHits());
-					Log.i("onFirstViewAttach: ", "загрузка с интернета");
-					getViewState().showReply();
-					AppDagger.getAppDagger().clearRequestComponent();
+		request.setPerPage(number);
+		Single<Response<Reply>> replySingle = request.toRequest();
+		Disposable disposable = replySingle.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(response -> {
+					if (response.isSuccessful() && response.body() != null){
+						data.setNumberPage(number);
+						data.downloadServer(response.body().getHits());
+						getViewState().showReply();
+					} else if (response.errorBody() != null){
+						getViewState().showServerResponse(response.errorBody().string());
+					}
 				},
-				e -> Log.e("ServerError", e.getMessage()));
+				e -> getViewState().showServerResponse(e.getMessage()));
 	}
 
 	private String getChoice(SelectionParameter[] parameters){
@@ -111,5 +122,11 @@ public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectab
 				getViewState().showParameters(title, queryCategories);
 				break;
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		AppDagger.getAppDagger().clearRequestComponent();
 	}
 }

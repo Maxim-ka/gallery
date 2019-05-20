@@ -56,7 +56,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 			SelectionParameter[] parameters = (SelectionParameter[]) getArguments().getParcelableArray("parameters");
 			if (getContext() != null && parameters != null){
 				if (parameters.length > 6) scope = 0.85f;
-				listView.setAdapter(new MyAdapterSpinner(getContext(), android.R.layout.select_dialog_multichoice, parameters));
+				listView.setAdapter(new MyAdapterSelectionParameters(getContext(), android.R.layout.select_dialog_multichoice, parameters));
 			}
 		}
 		if (scope != 0 && getActivity() != null) {
@@ -72,7 +72,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 	public void onClick(View v) {
 		switch (v.getId()){
 			case R.id.but_cancel:
-				resetChange((MyAdapterSpinner) listView.getAdapter());
+				resetChange((MyAdapterSelectionParameters) listView.getAdapter());
 				break;
 			case R.id.but_ok:
 		}
@@ -101,7 +101,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 		return dialog;
 	}
 
-	private void resetChange(MyAdapterSpinner adapter){
+	private void resetChange(MyAdapterSelectionParameters adapter){
 		for (int i = 0; i < adapter.getCount(); i++) {
 			selectable.select(i, false, title);
 		}
@@ -121,7 +121,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 	@Override
 	public void onCancel(@NonNull DialogInterface dialog) {
 		super.onCancel(dialog);
-		resetChange((MyAdapterSpinner) listView.getAdapter());
+		resetChange((MyAdapterSelectionParameters) listView.getAdapter());
 		selectable.toFinish(title);
 	}
 
@@ -132,9 +132,9 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 		selectable = null;
 	}
 
-	private static class MyAdapterSpinner extends ArrayAdapter<SelectionParameter> {
+	private static class MyAdapterSelectionParameters extends ArrayAdapter<SelectionParameter> {
 
-		MyAdapterSpinner(@NonNull Context context, int resource, @NonNull SelectionParameter[] objects) {
+		MyAdapterSelectionParameters(@NonNull Context context, int resource, @NonNull SelectionParameter[] objects) {
 			super(context, resource, objects);
 		}
 

@@ -1,5 +1,7 @@
 package reschikov.geekbrains.gallery.presenter;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import java.util.ArrayList;
@@ -13,9 +15,8 @@ import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Se
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Watchable;
 
 @InjectViewState
-public class GalleryPresenter extends MvpPresenter<Watchable> implements Observable, Seen {
+public class GalleryPresenter extends MvpPresenter<Watchable> implements Seen {
 
-	private Observer observer;
     private final List<MyImage> list;
     private final RecyclePresenter recyclePresenter;
 
@@ -29,7 +30,7 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
     public GalleryPresenter() {
 		AppDagger.getAppDagger().getAppComponent().inject(this);
 	    recyclePresenter = new RecyclePresenter();
-	    list = data.getImageList();
+	    list = data.getQueue().poll();
     }
 
 	private void syncData(){
@@ -50,25 +51,13 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
 	public void onDestroy() {
 		super.onDestroy();
 		syncData();
-		unsubscribe();
-	}
-
-	@Override
-	public void subscribe(Observer observer) {
-		this.observer = observer;
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i).isFavorite())  observer.add(list.get(i));
-		}
-	}
-
-	@Override
-	public void unsubscribe() {
-		observer = null;
 	}
 
 	@Override
 	public void delete(MyImage myImage) {
+		Log.i("Gallery delete: ", String.valueOf(myImage.getId()));
 		int index = list.indexOf(myImage);
+		Log.i("gallery index: ", String.valueOf(index));
 		recyclePresenter.delete(index);
 		getViewState().delete(index);
 	}
@@ -100,22 +89,20 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Observa
         @Override
         public void delete(int pos) {
         	MyImage myImage = list.get(pos);
-	        if (myImage.isFavorite()) observer.del(myImage);
 	        if (myImage.getRowId() != 0) data.removeFromDatabase(myImage);
 	        list.remove(myImage);
+	        data.getImageList().remove(myImage);
         }
 
         @Override
         public void setFavorite(int pos, boolean isChecked) {
 	        MyImage myImage = list.get(pos);
 	        myImage.setFavorite(isChecked);
-	        if (myImage.isFavorite()) observer.add(myImage);
-	        else observer.del(myImage);
         }
 
 		@Override
-		public void toSee(MyImage myImage) {
-			getViewState().toLook(myImage);
+		public void toSee(int position) {
+			getViewState().toLook(list, position);
 		}
 	}
 }

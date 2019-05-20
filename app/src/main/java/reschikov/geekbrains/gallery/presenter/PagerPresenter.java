@@ -2,19 +2,24 @@ package reschikov.geekbrains.gallery.presenter;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import reschikov.geekbrains.gallery.data.MyImage;
+import javax.inject.Inject;
+import reschikov.geekbrains.gallery.data.Data;
+import reschikov.geekbrains.gallery.data.dagger.AppDagger;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.Selected;
 
 @InjectViewState
-public class PagerPresenter extends MvpPresenter<Selected> implements Observer {
+public class PagerPresenter extends MvpPresenter<Selected> {
 
-	@Override
-    public void add(MyImage myImage){
-        getViewState().add(myImage);
-    }
+	@Inject
+	Data data;
 
-    @Override
-    public void del(MyImage myImage){
-        getViewState().del(myImage);
-    }
+	public PagerPresenter() {
+		AppDagger.getAppDagger().getAppComponent().inject(this);
+		prepareQueue();
+	}
+
+	private void prepareQueue(){
+		data.prepareQueue();
+		getViewState().fillAdapter(data.getListPage());
+	}
 }

@@ -20,11 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 import androidx.transition.TransitionManager;
+import java.util.ArrayList;
+import java.util.List;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
 import reschikov.geekbrains.gallery.presenter.GalleryPresenter;
-import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.ViewPagerFragment;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.viewpager2.ViewPager2Fragment;
 
 public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 
@@ -53,7 +55,6 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
         if (savedInstanceState != null) {
             spanCount = savedInstanceState.getInt("spanCount");
         }
-        if (getParentFragment() != null) presenter.subscribe(((ViewPagerFragment)getParentFragment()).getPresenter());
         myAdapter = new MyAdapterRecycleView(presenter.getRecyclePresenter());
         recyclerView.setAdapter(myAdapter);
         new LinearSnapHelper().attachToRecyclerView(recyclerView);
@@ -87,15 +88,15 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 	}
 
 	@Override
-	public void toLook(MyImage myImage) {
+	public void toLook(List<MyImage> list, int position) {
     	if (getActivity() == null) return;
 		FragmentManager manager = getActivity().getSupportFragmentManager();
-		ItemFragment itemFragment = ItemFragment.newInstance(myImage);
+		ViewPager2Fragment pager2Fragment = ViewPager2Fragment.newInstance((ArrayList<MyImage>) list, position);
 		manager.beginTransaction()
-			.add(R.id.frame_master, itemFragment)
+			.add(R.id.frame_master, pager2Fragment)
 			.addToBackStack(null)
 			.commit();
-		itemFragment.setSeen(presenter);
+		pager2Fragment.setSeen(presenter);
 	}
 
 	@Override

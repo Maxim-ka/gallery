@@ -2,10 +2,15 @@ package reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFrag
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
+
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -15,27 +20,35 @@ import com.google.android.material.textfield.TextInputLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatSpinner;
+
 import butterknife.BindBool;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.Rule;
 import reschikov.geekbrains.gallery.data.SelectionParameter;
 import reschikov.geekbrains.gallery.presenter.FieldsPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.Changing;
+import reschikov.geekbrains.gallery.view.mainActivity.dialogs.Notice;
 
-public class FieldsFragment extends MvpAppCompatFragment implements Displayed, View.OnClickListener {
+public class FieldsFragment extends MvpAppCompatFragment implements Displayed, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 	@BindView(R.id.what_layout)TextInputLayout whatLayout;
     @BindView(R.id.what) TextInputEditText what;
 	@BindView(R.id.choice_type)	AppCompatButton buttonType;
 	@BindView(R.id.choice_orientation) AppCompatButton buttonOrientation;
     @BindView(R.id.choice_category) AppCompatButton buttonCategory;
+    @BindView(R.id.choice_per_page) AppCompatSpinner spinner;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindBool(R.bool.is_portrait) boolean isPortrait;
+    @BindBool(R.bool.is_small) boolean isSmall;
     private Unbinder unbinder;
     private Changing changing;
+    private SharedPreferences preferences;
 
 	@InjectPresenter
 	FieldsPresenter presenter;
@@ -50,6 +63,13 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bottom_sheet, container,false);
 	    unbinder = ButterKnife.bind(this, view);
+	    if (getContext() != null){
+		    preferences = getContext().getSharedPreferences("request parameters", Context.MODE_PRIVATE);
+	    	SpinnerAdapter spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, createNumberOnPage());
+		    ((ArrayAdapter) spinnerAdapter).setDropDownViewResource(android.R.layout.simple_list_item_checked);
+		    spinner.setAdapter(spinnerAdapter);
+		    spinner.setSelection(preferences.getInt("per page" ,Rule.DEFAULT_PER_PAGE));
+	    }
 //        LinearLayout linearLayout = view.findViewById(R.id.bottom_sheet);
 //        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(linearLayout);
 //        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -91,16 +111,36 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
 		}
     }
 
-    private void showSelectionDialog(SelectionParameter[] parameters, String title){
-    	if (getActivity()== null) return;
-    	SpinnerDialogFragment.newInstance(parameters, title)
-		    .show(getActivity().getSupportFragmentManager(), title);
+    @OnItemSelected({R.id.choice_per_page})
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		int number = (int) parent.getItemAtPosition(position);
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putInt("per page", number);
+		editor.apply();
+	    presenter.setNumber(number);
+	}
+	@OnItemSelected({R.id.choice_per_page})
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {}
+
+    private Integer[] createNumberOnPage(){
+		Integer[] arr = new Integer[198];
+	    for (int i = 0; i < arr.length; i++) {
+		    arr[i] = i + 3;
+	    }
+	    return arr;
     }
 
-    private void outputError(TextInputLayout textInputLayout, String message){
-        textInputLayout.setError(message);
-        textInputLayout.setEndIconDrawable(R.drawable.ic_warning_red_24dp);
-        shake(textInputLayout);
+    private void showSelectionDialog(SelectionParameter[] parameters, String title){
+    	if (getActivity()== null) return;
+    	if (isSmall) getActivity().getSupportFragmentManager().beginTransaction()
+		    .add(R.id.frame_master, SpinnerDialogFragment.newInstance(parameters, title))
+	        .addToBackStack(null)
+		    .commit();
+    	else SpinnerDialogFragment.newInstance(parameters, title)
+		    .show(getActivity().getSupportFragmentManager(), title);
+
     }
 
     private void shake(TextInputLayout textInputLayout){
@@ -141,5 +181,11 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
 	public void showReply() {
 		int menuGallery = (isPortrait) ? R.id.navigation_gallery_list : R.id.navigation_gallery_grid;
 		changing.toggleFragments(menuGallery);
+	}
+
+	@Override
+	public void showServerResponse(String message) {
+		if (getActivity() != null) Notice.newInstance(message)
+			.show(getActivity().getSupportFragmentManager(), "tag Server Error");
 	}
 }

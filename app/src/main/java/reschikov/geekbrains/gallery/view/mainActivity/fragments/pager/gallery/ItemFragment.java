@@ -5,19 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.data.MyImage;
+import reschikov.geekbrains.gallery.data.dagger.AppDagger;
+import reschikov.geekbrains.gallery.data.net.ImageUploader;
 import reschikov.geekbrains.gallery.presenter.ItemPresenter;
 import reschikov.geekbrains.gallery.presenter.Seen;
 import reschikov.geekbrains.gallery.view.mainActivity.Retentive;
@@ -26,7 +28,7 @@ public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
 
 	private static final String KEY_MY_IMAGE = "keyMyImage";
 
-	static ItemFragment newInstance(MyImage myImage){
+	public static ItemFragment newInstance(MyImage myImage){
 		ItemFragment fragment = new ItemFragment();
 		Bundle args = new Bundle();
 		args.putParcelable(KEY_MY_IMAGE, myImage);
@@ -41,7 +43,7 @@ public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
 	private Unbinder unbinder;
 	private Seen seen;
 
-	void setSeen(Seen seen) {
+	public void setSeen(Seen seen) {
 		this.seen = seen;
 	}
 
@@ -53,26 +55,29 @@ public class ItemFragment  extends MvpAppCompatFragment implements Retentive {
 		return new ItemPresenter();
 	}
 
+	@Inject
+	ImageUploader imageUploader;
+
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.item, container, false);
-		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		CardView.LayoutParams layoutParams = new CardView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+		layoutParams.setMargins(0, 16, 0, 16);
+		view.setLayoutParams(layoutParams);
 		unbinder = ButterKnife.bind(this, view);
+		AppDagger.getAppDagger().getAppComponent().inject(this);
 		if (getArguments() != null){
 			myImage = getArguments().getParcelable(KEY_MY_IMAGE);
 		}
 		if (myImage != null){
-			Glide.with(this).load(myImage.getUrl()).into(imageView);
+			imageUploader.download(imageView, myImage.getUrl());
 			chipFavorite.setChecked(myImage.isFavorite());
 			presenter.setMyImage(myImage);
 		}
 		if (seen != null) presenter.subscribe(seen);
 		chipDelete.setOnLongClickListener(v -> {
 			presenter.delete();
-			if (getActivity() != null) {
-				getActivity().getSupportFragmentManager().popBackStack();
-			}
 			return true;
 		});
 		chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> presenter.setFavorite(isChecked));

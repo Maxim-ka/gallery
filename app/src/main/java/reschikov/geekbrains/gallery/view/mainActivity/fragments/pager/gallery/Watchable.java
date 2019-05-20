@@ -8,6 +8,8 @@ import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
+import java.util.List;
+
 import reschikov.geekbrains.gallery.data.MyImage;
 
 public interface Watchable extends MvpView {
@@ -16,7 +18,7 @@ public interface Watchable extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)
     void check(int pos);
 	@StateStrategyType(SkipStrategy.class)
-	void toLook(MyImage myImage);
+	void toLook(List<MyImage> list, int position);
 	@StateStrategyType(SkipStrategy.class)
 	void updateRecyclerView();
 }
