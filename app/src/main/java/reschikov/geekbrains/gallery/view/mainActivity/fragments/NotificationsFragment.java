@@ -24,7 +24,6 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.presenter.MoxyPresenter;
-import reschikov.geekbrains.gallery.view.mainActivity.Counted;
 
 public class NotificationsFragment extends MvpAppCompatFragment implements MoxyBindable{
 
@@ -45,14 +44,13 @@ public class NotificationsFragment extends MvpAppCompatFragment implements MoxyB
     }
 
     private Unbinder unbinder;
-    private Counted counted;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
         unbinder = ButterKnife.bind(this, view);
-        counted.reset();
+
         take.setOnClickListener(viewButton -> presenter.tie(inputText.getText().toString()));
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
             view.setBackground(bell);
@@ -68,12 +66,6 @@ public class NotificationsFragment extends MvpAppCompatFragment implements MoxyB
     public void passString(String string) {
         inputText.setText(null);
         textView.setText(string);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        counted = (Counted)context;
     }
 
     @Override

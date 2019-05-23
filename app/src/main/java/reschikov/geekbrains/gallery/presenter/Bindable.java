@@ -1,6 +1,5 @@
 package reschikov.geekbrains.gallery.presenter;
 
-import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Settable;
 
 public interface Bindable {
@@ -10,4 +9,5 @@ public interface Bindable {
     void delete(int pos);
     void setFavorite(int pos, boolean isChecked);
     void toSee(int position);
+    void getScrollDirection(int direction);
 }

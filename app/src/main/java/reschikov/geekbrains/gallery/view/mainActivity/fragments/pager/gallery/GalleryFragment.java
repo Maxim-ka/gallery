@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
@@ -20,10 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 import androidx.transition.TransitionManager;
-import java.util.ArrayList;
-import java.util.List;
 import reschikov.geekbrains.gallery.R;
-import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
 import reschikov.geekbrains.gallery.presenter.GalleryPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.viewpager2.ViewPager2Fragment;
@@ -55,7 +50,7 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
         if (savedInstanceState != null) {
             spanCount = savedInstanceState.getInt("spanCount");
         }
-        myAdapter = new MyAdapterRecycleView(presenter.getRecyclePresenter());
+        myAdapter = new MyAdapterRecycleView(presenter.getRecyclePresenter(), false);
         recyclerView.setAdapter(myAdapter);
         new LinearSnapHelper().attachToRecyclerView(recyclerView);
         new ItemTouchHelper(new MyItemTouchHelperCallback(myAdapter)).attachToRecyclerView(recyclerView);
@@ -88,10 +83,10 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 	}
 
 	@Override
-	public void toLook(List<MyImage> list, int position) {
+	public void toLook(int position) {
     	if (getActivity() == null) return;
 		FragmentManager manager = getActivity().getSupportFragmentManager();
-		ViewPager2Fragment pager2Fragment = ViewPager2Fragment.newInstance((ArrayList<MyImage>) list, position);
+		ViewPager2Fragment pager2Fragment = ViewPager2Fragment.newInstance(position);
 		manager.beginTransaction()
 			.add(R.id.frame_master, pager2Fragment)
 			.addToBackStack(null)
@@ -101,6 +96,6 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 
 	@Override
 	public void updateRecyclerView() {
-		myAdapter.notifyDataSetChanged();
+//		myAdapter.notifyDataSetChanged();
 	}
 }

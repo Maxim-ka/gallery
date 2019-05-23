@@ -3,36 +3,30 @@ package reschikov.geekbrains.gallery.view.mainActivity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.lifecycle.ViewModelProvider;
+import butterknife.BindBool;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.view.colorSelectionActivity.ColorThemeSelection;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment.FieldsFragment;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.ViewPagerFragment;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.NotificationsFragment;
 import reschikov.geekbrains.gallery.R;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Changing, Counted{
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, Changing{
 
     private int theme;
-    private int counter;
-    private View viewBadge;
-    private BottomNavigationItemView notifications;
-    private TextView badge;
-    private BottomNavigationView bottomNavigationView;
-    private boolean isPortrait;
+	@BindBool(R.bool.is_portrait) boolean isPortrait;
+    @BindView(R.id.bottom_navigation) BottomNavigationView bottomNavigationView;
     private MyViewModelSpanCount modelSpanCount;
+	private Unbinder unbinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +37,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             setTheme(theme);
         }
         setContentView(R.layout.activity_main);
-        isPortrait = getResources().getBoolean(R.bool.is_portrait);
+        unbinder = ButterKnife.bind(this);
         modelSpanCount =  new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MyViewModelSpanCount.class);
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-
-        BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNavigationView.getChildAt(0);
-        notifications = menuView.findViewById(R.id.navigation_notifications);
-        viewBadge = LayoutInflater.from(this).inflate(R.layout.badge, menuView, false);
-        badge = viewBadge.findViewById(R.id.text_badge);
 
         if (savedInstanceState == null) {
             loadFragment(new FieldsFragment(), "Tag_Home");
         }
-
-        boolean isPortrait = getResources().getBoolean(R.bool.is_portrait);
         if (!isPortrait && modelSpanCount.getLiveData().getValue() != null &&
                 modelSpanCount.getLiveData().getValue() != 2){
            modelSpanCount.setValueLiveData(2);
@@ -80,13 +66,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 //            .setCustomAnimations(R.animator.animator_enter, R.animator.animator_exit)
             .replace(R.id.frame_master, newFragment, tag)
             .commit();
-    }
-
-    private void setBadge(){
-        if (badge != null){
-            if (counter > 9) badge.setText("9+");
-            else badge.setText(String.valueOf(counter));
-        }
     }
 
     private void checkItemMenu(){
@@ -126,24 +105,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         checkItemMenu();
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null){
-            counter = savedInstanceState.getInt("counter");
-            if (counter != 0){
-                notifications.addView(viewBadge);
-                setBadge();
-            }
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("counter", counter);
-    }
-
     public boolean loadGallery(String tag, int spanCount){
         if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_list && spanCount == 1) return false;
         if (bottomNavigationView.getSelectedItemId() == R.id.navigation_gallery_grid && spanCount == 2) return false;
@@ -178,23 +139,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
-
-    @Override
-    public void count() {
-        if (counter == 0) notifications.addView(viewBadge);
-        counter++;
-        if (counter <= 10) setBadge();
-    }
-
-    @Override
-    public void reset() {
-        counter = 0;
-        badge.setText(null);
-        notifications.removeView(viewBadge);
-    }
-
 	@Override
 	public void toggleFragments(int id) {
 		bottomNavigationView.setSelectedItemId(id);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unbinder.unbind();
 	}
 }

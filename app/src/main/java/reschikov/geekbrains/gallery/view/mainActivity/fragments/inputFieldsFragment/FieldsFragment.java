@@ -1,8 +1,9 @@
 package reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment;
 
-import android.animation.ObjectAnimator;
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,18 +11,20 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
-
 import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatSpinner;
-
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import javax.inject.Inject;
 import butterknife.BindBool;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +34,8 @@ import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
 import reschikov.geekbrains.gallery.Rule;
 import reschikov.geekbrains.gallery.data.SelectionParameter;
+import reschikov.geekbrains.gallery.data.dagger.AppDagger;
+import reschikov.geekbrains.gallery.data.net.ImageUploader;
 import reschikov.geekbrains.gallery.presenter.FieldsPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.Changing;
 import reschikov.geekbrains.gallery.view.mainActivity.dialogs.Notice;
@@ -50,6 +55,9 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
     private Changing changing;
     private SharedPreferences preferences;
 
+    @Inject
+	ImageUploader uploader;
+
 	@InjectPresenter
 	FieldsPresenter presenter;
 
@@ -63,12 +71,13 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bottom_sheet, container,false);
 	    unbinder = ButterKnife.bind(this, view);
+		AppDagger.getAppDagger().getAppComponent().inject(this);
 	    if (getContext() != null){
 		    preferences = getContext().getSharedPreferences("request parameters", Context.MODE_PRIVATE);
 	    	SpinnerAdapter spinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, createNumberOnPage());
 		    ((ArrayAdapter) spinnerAdapter).setDropDownViewResource(android.R.layout.simple_list_item_checked);
 		    spinner.setAdapter(spinnerAdapter);
-		    spinner.setSelection(preferences.getInt("per page" ,Rule.DEFAULT_PER_PAGE));
+		    spinner.setSelection(preferences.getInt("position" ,Rule.DEFAULT_PER_PAGE - 3));
 	    }
 //        LinearLayout linearLayout = view.findViewById(R.id.bottom_sheet);
 //        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(linearLayout);
@@ -92,7 +101,42 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
         return view;
     }
 
-    @OnClick({R.id.choice_type, R.id.choice_orientation, R.id.choice_category, R.id.fab})
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+		if (requestCode == 5 && permissions.length == 2 && (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+				grantResults[1] == PackageManager.PERMISSION_GRANTED)){
+			if (uploader.imageCash.isExternalStorageWritable()) {
+				uploader.setAllowed(true);
+				return;
+			}
+			createNoticeNoAccess();
+		}
+		uploader.setAllowed(false);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		if (getActivity() == null) return;
+		if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+			ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
+		} else {
+			if (uploader.imageCash.isExternalStorageWritable()) uploader.setAllowed(true);
+			else {
+				createNoticeNoAccess();
+				uploader.setAllowed(false);
+			}
+		}
+	}
+
+	private void createNoticeNoAccess(){
+		if (getView() != null )Snackbar.make(getView(), "There is no access to the folder MyGallery",Snackbar.LENGTH_INDEFINITE).show();
+//		if (getActivity() != null) Notice.newInstance("There is no access to the folder MyGallery", "no access to external storage")
+//			.show(getActivity().getSupportFragmentManager(), "no access to external storage");
+	}
+
+	@OnClick({R.id.choice_type, R.id.choice_orientation, R.id.choice_category, R.id.fab})
     @Override
     public void onClick(View v) {
 		switch (v.getId()){
@@ -116,7 +160,7 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		int number = (int) parent.getItemAtPosition(position);
 		SharedPreferences.Editor editor = preferences.edit();
-		editor.putInt("per page", number);
+		editor.putInt("position", position);
 		editor.apply();
 	    presenter.setNumber(number);
 	}
@@ -141,13 +185,6 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
     	else SpinnerDialogFragment.newInstance(parameters, title)
 		    .show(getActivity().getSupportFragmentManager(), title);
 
-    }
-
-    private void shake(TextInputLayout textInputLayout){
-        float[] offset = new float[]{5.0f, -5.0f, -20.0f, 20.0f, 25.0f, -25.0f, -5.0f, 5.0f, 15.0f, -15.0f};
-        ObjectAnimator animation = ObjectAnimator.ofFloat(textInputLayout, "translationX", offset);
-        animation.setDuration(1_000);
-        animation.start();
     }
 
 	@Override
@@ -185,7 +222,7 @@ public class FieldsFragment extends MvpAppCompatFragment implements Displayed, V
 
 	@Override
 	public void showServerResponse(String message) {
-		if (getActivity() != null) Notice.newInstance(message)
+		if (getActivity() != null) Notice.newInstance(message, "Server Error")
 			.show(getActivity().getSupportFragmentManager(), "tag Server Error");
 	}
 }

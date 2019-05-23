@@ -1,4 +1,6 @@
 package reschikov.geekbrains.gallery.presenter;
+import androidx.annotation.Nullable;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import javax.inject.Inject;
@@ -58,7 +60,7 @@ public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectab
 		data = AppDagger.getAppDagger().getAppComponent().getData();
 	}
 
-	public void sendRequest(String what){
+	public void sendRequest(@Nullable String what){
 		data.reload();
 		if (what != null && !what.equals("")) request.setQ(what);
 		if (queryTypes != null) request.setType(queryTypes);

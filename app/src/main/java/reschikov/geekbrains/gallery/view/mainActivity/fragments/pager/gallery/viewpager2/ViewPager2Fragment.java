@@ -6,27 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
-import com.arellomobile.mvp.MvpAppCompatFragment;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
-import java.util.ArrayList;
-import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
-import reschikov.geekbrains.gallery.data.MyImage;
-import reschikov.geekbrains.gallery.presenter.Pager2Presenter;
+import reschikov.geekbrains.gallery.presenter.GalleryPresenter;
 import reschikov.geekbrains.gallery.presenter.Seen;
-import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.ItemFragment;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.MyAdapterRecycleView;
 
-public class ViewPager2Fragment extends MvpAppCompatFragment implements Shown {
+public class ViewPager2Fragment extends Fragment{
 
-	public static ViewPager2Fragment newInstance(ArrayList<MyImage> myImages, int position){
+	public static ViewPager2Fragment newInstance(int position){
 		ViewPager2Fragment fragment = new ViewPager2Fragment();
 		Bundle args = new Bundle();
-		args.putParcelableArrayList("myImages", myImages);
 		args.putInt("position", position);
 		fragment.setArguments(args);
 		return fragment;
@@ -34,16 +28,7 @@ public class ViewPager2Fragment extends MvpAppCompatFragment implements Shown {
 
 	@BindView(R.id.view_pager_2) ViewPager2 pager;
 	private Unbinder unbinder;
-	private MyAdapterViewPager2 adapterViewPager;
 	private Seen seen;
-
-	@InjectPresenter
-	Pager2Presenter presenter;
-
-	@ProvidePresenter
-	Pager2Presenter providePresenter(){
-		return new Pager2Presenter();
-	}
 
 	public void setSeen(Seen seen) {
 		this.seen = seen;
@@ -54,44 +39,37 @@ public class ViewPager2Fragment extends MvpAppCompatFragment implements Shown {
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_view_pager_2, container, false);
 		unbinder = ButterKnife.bind(this, view);
-		adapterViewPager = new MyAdapterViewPager2(this);
-		pager.setAdapter(adapterViewPager);
+		MyAdapterRecycleView adapter = new MyAdapterRecycleView(((GalleryPresenter) seen).getRecyclePresenter(), true);
+		pager.setAdapter(adapter);
 		if (getArguments() != null){
-			List<MyImage> myImageList = getArguments().getParcelableArrayList("myImages");
 			int position = getArguments().getInt("position");
-			if (myImageList != null) {
-				presenter.setImageList(myImageList);
-				presenter.setLastPosition(position);
-				presenter.subscribe(seen);
-			}
+			pager.setCurrentItem(position, false);
 		}
-		pager.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
+		pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				super.onPageScrollStateChanged(state);
+				if (state == ViewPager2.SCROLL_STATE_IDLE){
+					if (pager.getOrientation() != seen.getOrientation()){
+						pager.setOrientation(seen.getOrientation());
+						// TODO: 22.05.2019 сделать задержку анимацией
+					}
+				}
+			}
+		});
 //		pager.setPageTransformer(new DepthTransformation());
 		return view;
 	}
 
 	@Override
-	public void fillAdapter(List<MyImage> list){
-		for (int i = 0; i < list.size(); i++) {
-			ItemFragment itemFragment = ItemFragment.newInstance(list.get(i));
-			itemFragment.setSeen(presenter);
-			adapterViewPager.addFragment(itemFragment);
-		}
-		adapterViewPager.notifyDataSetChanged();
-		pager.setCurrentItem(presenter.getLastPosition(), false);
-		pager.setOffscreenPageLimit(adapterViewPager.getItemCount() / 5);
-	}
-
-	@Override
-	public void deleteFragment(int position) {
-		adapterViewPager.delFragment(position);
-	}
-
-	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		presenter.setLastPosition(pager.getCurrentItem());
 		unbinder.unbind();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
 		seen = null;
 	}
 }

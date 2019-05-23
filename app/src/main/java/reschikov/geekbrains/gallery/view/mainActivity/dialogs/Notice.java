@@ -13,10 +13,11 @@ import reschikov.geekbrains.gallery.R;
 
 public class Notice extends DialogFragment {
 
-	public static Notice newInstance(String message){
+	public static Notice newInstance(String message, String title){
 		Notice fragment = new Notice();
 		Bundle args = new Bundle();
 		args.putString("message", message);
+		args.putString("title", title);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -26,11 +27,12 @@ public class Notice extends DialogFragment {
 	public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 		if (getActivity() != null){
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-			builder.setTitle("server response");
 			builder.setIcon(R.drawable.ic_warning_red_24dp);
 			if (getArguments() != null){
 				String message = getArguments().getString("message");
+				String title = getArguments().getString("title");
 				builder.setMessage(message);
+				builder.setTitle(title);
 			}
 			builder.setPositiveButton("ok", (DialogInterface dialog, int id) -> dialog.dismiss());
 			return builder.create();

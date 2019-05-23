@@ -17,7 +17,6 @@ import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.schedulers.Schedulers;
-import reschikov.geekbrains.gallery.data.dagger.DaggerTestComponent;
 import reschikov.geekbrains.gallery.data.dagger.MyImageDaoTestModule;
 import reschikov.geekbrains.gallery.data.dagger.TestComponent;
 import reschikov.geekbrains.gallery.data.database.MyImageDao;

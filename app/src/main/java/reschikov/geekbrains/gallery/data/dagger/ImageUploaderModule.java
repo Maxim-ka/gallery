@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import reschikov.geekbrains.gallery.data.files.ImageCash;
 import reschikov.geekbrains.gallery.data.net.ImageUploader;
 
 @Module
@@ -15,6 +16,12 @@ class ImageUploaderModule {
 
 	ImageUploaderModule(Context context) {
 		this.context = context;
+	}
+
+	@Singleton
+	@Provides
+	ImageCash getImageCash(){
+		return new ImageCash();
 	}
 
 	@Singleton

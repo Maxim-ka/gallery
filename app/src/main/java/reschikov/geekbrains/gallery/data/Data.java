@@ -1,12 +1,11 @@
 package reschikov.geekbrains.gallery.data;
 
-import android.util.Log;
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Queue;
-
 import javax.inject.Inject;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -69,26 +68,28 @@ public class Data {
 	}
 
 	public void removeFromDatabase(MyImage myImage){
+		final String name = myImage.getPreview();
 		Disposable disposable = myImageDao.delete(myImage)
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(() -> Log.i("removeFromDatabase: ", "удалено"),
-				e -> Log.e("removeFromDatabase: ", e.getMessage()));
+			.subscribe(() -> indicateCompletion(String.format("%s removed from base", name)),
+				e -> indicateCompletion(String.format("%s not deleted, %s", name, e.getMessage())));
 	}
 
 	public void removeListMyImages(List<MyImage> list){
 		Disposable disposable = myImageDao.delete(list)
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe();
+			.subscribe(() -> indicateCompletion("removed from base"),
+				e -> indicateCompletion(String.format("removal problem %s", e.getMessage())));
 	}
 
 	public void insertListMyImages(List<MyImage> list){
 		Disposable disposable = myImageDao.insert(list)
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(() -> Log.i("insertMyImage: ", "добавлено "),
-				e -> Log.e("insertMyImage: ", e.getMessage()));
+			.subscribe(() -> indicateCompletion("added to base"),
+				e -> indicateCompletion(String.format("error adding to database, %s", e.getMessage())));
 	}
 
 	public void reload(){
@@ -124,7 +125,13 @@ public class Data {
 					myImages.get(i).setFavorite(true);
 					imageList.add(myImages.get(i));
 				}
-				Log.i("loadFromDatabase: ", "загрузка базы");
-			}, e -> Log.e("loadFromDatabase: ", e.getMessage()));
+				indicateCompletion("base load");
+			},
+			e -> indicateCompletion(String.format("base load %s", e.getMessage())),
+			() -> indicateCompletion("base is empty"));
+	}
+
+	private void indicateCompletion(String message){
+		Toast.makeText(AppDagger.getAppDagger().getApplicationContext(), message, Toast.LENGTH_LONG).show();
 	}
 }

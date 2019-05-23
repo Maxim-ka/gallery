@@ -11,14 +11,11 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
-import reschikov.geekbrains.gallery.data.MyImage;
 import reschikov.geekbrains.gallery.presenter.PagerPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.GalleryFragment;
 
