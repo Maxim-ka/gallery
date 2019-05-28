@@ -1,29 +1,35 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme0" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme0" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryTh0</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTh0</item>
         <item name="colorAccent">@color/colorAccentTh0</item>
+        <item name="android:textSize">22sp</item>
+        <item name="dialogTheme">@style/MyDialog</item>
         <item name="android:windowContentTransitions" tools:ignore="NewApi">true</item>
     </style>
 
-    <style name="AppTheme1" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="MyDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="android:windowNoTitle">false</item>
+    </style>
+
+    <style name="AppTheme1" parent="AppTheme0">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryTh1</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTh1</item>
         <item name="colorAccent">@color/colorAccentTh1</item>
     </style>
 
-    <style name="AppTheme2" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme2" parent="AppTheme1">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryTh2</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTh2</item>
         <item name="colorAccent">@color/colorAccentTh2</item>
     </style>
 
-    <style name="AppTheme3" parent="Theme.MaterialComponents.Light.DarkActionBar">
+    <style name="AppTheme3" parent="AppTheme2">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryTh3</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkTh3</item>
@@ -52,10 +58,6 @@
         <item name="android:layout_margin">4dp</item>
         <item name="android:padding">16dp</item>
         <item name="android:layout_weight">1</item>
-    </style>
-
-    <style name="textBadge">
-        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

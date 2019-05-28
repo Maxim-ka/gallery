@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp" >
+
+    <ListView
+        android:id="@+id/viewList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:background="?android:attr/activatedBackgroundIndicator"
+        android:divider="@android:color/black"
+        android:dividerHeight="3dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarFadeDuration="0"
+        android:scrollbarTrackVertical="?attr/colorAccent"
+        android:scrollbarThumbVertical="?attr/colorPrimaryDark"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="outsideInset"
+        android:headerDividersEnabled="true"
+        android:footerDividersEnabled="true"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:orientation="horizontal"
+        android:layout_margin="8dp"
+        >
+
+        <Button
+            android:id="@+id/but_cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="cancel" />
+
+        <Button
+            android:id="@+id/but_ok"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="ok" />
+
+    </LinearLayout>
+
+</LinearLayout>
+

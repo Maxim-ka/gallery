@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 public class MyViewModelSpanCount extends ViewModel {
 
-    private MutableLiveData<Integer> liveData = new MutableLiveData<>();
+    private final MutableLiveData<Integer> liveData = new MutableLiveData<>();
 
     public LiveData<Integer> getLiveData() {
         return liveData;

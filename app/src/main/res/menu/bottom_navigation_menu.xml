@@ -5,21 +5,21 @@
     >
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
-        android:title="home"
+        android:id="@+id/navigation_search"
+        android:icon="@drawable/ic_searched_for_black_24dp"
+        android:title="search"
         app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_gallery_list"
-        android:icon="@drawable/ic_view_headline_black_24dp"
-        android:title="gallery list"
+        android:icon="@drawable/ic_view_stream_black_24dp"
+        android:title="list"
         app:showAsAction="withText"/>
 
     <item
         android:id="@+id/navigation_gallery_grid"
         android:icon="@drawable/ic_view_module_black_24dp"
-        android:title="gallery table"
+        android:title="table"
         app:showAsAction="withText"/>
 
     <item
