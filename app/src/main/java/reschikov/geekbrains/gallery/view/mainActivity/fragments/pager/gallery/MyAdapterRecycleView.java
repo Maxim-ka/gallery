@@ -1,6 +1,5 @@
 package reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery;
 
-import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,27 +10,31 @@ import com.google.android.material.chip.Chip;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
-
 import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import reschikov.geekbrains.gallery.R;
-import reschikov.geekbrains.gallery.Rule;
 import reschikov.geekbrains.gallery.data.MyImage;
-import reschikov.geekbrains.gallery.data.dagger.AppDagger;
+import reschikov.geekbrains.gallery.dagger.AppDagger;
 import reschikov.geekbrains.gallery.data.net.ImageUploader;
 import reschikov.geekbrains.gallery.presenter.Bindable;
+import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.viewpager2.Observer;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.widget.ImageView.ScaleType.CENTER_CROP;
+import static android.widget.ImageView.ScaleType.FIT_CENTER;
 
 public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removing{
 
-    private final Bindable bindable;
+	private static final float HEIGHT_PARENT_DISPLAY = 0.5f;
+	private final Bindable bindable;
+    private final Observer observer;
     private final boolean isFullView;
 
-	public MyAdapterRecycleView(Bindable bindable, boolean isFullView) {
+	public MyAdapterRecycleView(Bindable bindable, Observer observer) {
         this.bindable = bindable;
-        this.isFullView = isFullView;
+        this.observer = observer;
+        isFullView = observer != null;
     }
 
     @NonNull
@@ -41,11 +44,9 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removi
 	    if (isFullView){
 		    itemView.getLayoutParams().height = MATCH_PARENT;
 	    } else {
-		    boolean isPortrait = parent.getContext().getResources().getBoolean(R.bool.is_portrait);
 		    DisplayMetrics metricsB = new DisplayMetrics();
 		    parent.getDisplay().getMetrics(metricsB);
-		    float scope = (isPortrait) ? 0.3f : 0.5f;
-		    itemView.getLayoutParams().height = (int) (metricsB.heightPixels / metricsB.density * scope);
+		    itemView.getLayoutParams().height = (int) (metricsB.heightPixels / metricsB.density * HEIGHT_PARENT_DISPLAY);
 	    }
         return new MyViewHolder(itemView, this);
     }
@@ -79,7 +80,7 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removi
 
 	@Override
 	public void setScrollDirection(int direction) {
-		bindable.getScrollDirection(direction);
+		observer.changeOrientation(direction);
 	}
 
 	public static class MyViewHolder extends RecyclerView.ViewHolder implements Settable {
@@ -88,7 +89,7 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removi
         @BindView(R.id.chip_favorite) Chip chipFavorite;
         @BindView(R.id.chip_delete) Chip chipDelete;
         @Inject ImageUploader imageUploader;
-        private Removing removing;
+        private final Removing removing;
 
         MyViewHolder(@NonNull View itemView, final Removing removing) {
             super(itemView);
@@ -125,26 +126,20 @@ public class MyAdapterRecycleView extends RecyclerView.Adapter implements Removi
         @Override
         public void bind(final MyImage myImage, final Bindable bindable) {
 	        String url;
-        	if (removing.isFullView()) url = myImage.getUrl();
-	        else {
+	        ImageView.ScaleType scaleType;
+        	if (removing.isFullView()) {
+        		url = myImage.getUrl();
+		        scaleType = FIT_CENTER;
+	        } else {
 		        url =  myImage.getPreview();
+		        scaleType = (bindable.getSpanCount() == 1) ? FIT_CENTER : CENTER_CROP;
 		        imageView.setOnClickListener(v -> bindable.toSee(getAdapterPosition()));
 	        }
-		    imageUploader.download(imageView, url);
-	        renameImage(myImage, url);
+	        imageView.setScaleType(scaleType);
+		    imageUploader.download(imageView, myImage, url);
             chipFavorite.setOnCheckedChangeListener(null);
             chipFavorite.setChecked(myImage.isFavorite());
             chipFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> bindable.setFavorite(getAdapterPosition(), isChecked));
-        }
-
-        private void renameImage(MyImage myImage, String url){
-        	if (url.startsWith(Rule.PREFIX_HTTPS)){
-        		if (url.equals(myImage.getPreview())){
-        			myImage.setPreview(Uri.parse(myImage.getPreview()).getLastPathSegment());
-        			return;
-		        }
-        	    if (url.equals(myImage.getUrl())) myImage.setUrl(Uri.parse(myImage.getUrl()).getLastPathSegment());
-	        }
         }
     }
 }

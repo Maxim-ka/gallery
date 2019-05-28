@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.appcompat.widget.LinearLayoutCompat
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp">
+    android:padding="8dp"
+    app:showDividers="middle"
+    app:divider="?attr/colorPrimaryDark"
+    app:dividerPadding="4dp">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/what_layout"
@@ -35,13 +38,11 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/form_separator"
-        android:layout_margin="8dp" >
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -56,18 +57,15 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:textAllCaps="false"
-            android:background="@android:drawable/btn_dropdown"
-            />
+            android:background="@android:drawable/btn_dropdown"  />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <LinearLayout
         android:id="@+id/orientation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/form_separator"
-        android:layout_margin="8dp">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -90,9 +88,7 @@
         android:id="@+id/category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/form_separator"
-        android:layout_margin="8dp">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
@@ -116,9 +112,7 @@
         android:id="@+id/per_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/form_separator"
-        android:layout_margin="8dp">
+        android:orientation="vertical" >
 
         <TextView
             android:layout_width="match_parent"
@@ -138,4 +132,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

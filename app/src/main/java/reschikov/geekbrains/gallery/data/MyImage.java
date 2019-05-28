@@ -108,6 +108,7 @@ public class MyImage implements Parcelable {
 
 	@Override
 	public boolean equals(@Nullable Object obj) {
+		if (obj == null) return false;
 		if (!(obj instanceof  MyImage)) return false;
 		MyImage image = (MyImage) obj;
 		return id == image.id;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="themes_name">
+        <item>Theme 1</item>
+        <item>Theme 2</item>
+        <item>Theme 3</item>
+        <item>Theme 4</item>
+    </string-array>
+
+    <string-array name="themes_style">
+        <item>AppTheme0</item>
+        <item>AppTheme1</item>
+        <item>AppTheme2</item>
+        <item>AppTheme3</item>
+    </string-array>
+</resources>

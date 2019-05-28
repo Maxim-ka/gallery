@@ -57,6 +57,7 @@ dependencies {
 
     implementation 'com.andkulikov:transitionseverywhere:2.0.0-beta01'
 
+    implementation 'androidx.preference:preference:1.1.0-alpha05'
     implementation 'androidx.viewpager2:viewpager2:1.0.0-alpha04'
     implementation 'androidx.transition:transition:1.2.0-alpha01'
     implementation 'androidx.vectordrawable:vectordrawable-animated:1.0.0'

@@ -19,6 +19,7 @@ import androidx.transition.Transition;
 import androidx.transition.TransitionInflater;
 import androidx.transition.TransitionManager;
 import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.dagger.AppDagger;
 import reschikov.geekbrains.gallery.data.MyViewModelSpanCount;
 import reschikov.geekbrains.gallery.presenter.GalleryPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.viewpager2.ViewPager2Fragment;
@@ -28,14 +29,16 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
     private MyAdapterRecycleView myAdapter;
     private RecyclerView recyclerView;
     private Transition transition;
-    private int spanCount;
 
     @InjectPresenter
     GalleryPresenter presenter;
 
     @ProvidePresenter
 	GalleryPresenter providePresenter(){
-	    return new GalleryPresenter();
+	    GalleryPresenter galleryPresenter = new GalleryPresenter();
+	    AppDagger.getAppDagger().getAppComponent().inject(galleryPresenter);
+	    galleryPresenter.initGalleryPresenter();
+	    return galleryPresenter;
     }
 
 	@Nullable
@@ -47,10 +50,7 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
             MyViewModelSpanCount modelSpanCount =  new ViewModelProvider(getActivity(), new ViewModelProvider.NewInstanceFactory()).get(MyViewModelSpanCount.class);
             modelSpanCount.getLiveData().observe(this, this::setLayoutManager);
         }
-        if (savedInstanceState != null) {
-            spanCount = savedInstanceState.getInt("spanCount");
-        }
-        myAdapter = new MyAdapterRecycleView(presenter.getRecyclePresenter(), false);
+        myAdapter = new MyAdapterRecycleView(presenter.getRecyclePresenter(), null);
         recyclerView.setAdapter(myAdapter);
         new LinearSnapHelper().attachToRecyclerView(recyclerView);
         new ItemTouchHelper(new MyItemTouchHelperCallback(myAdapter)).attachToRecyclerView(recyclerView);
@@ -59,17 +59,11 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
     }
 
     private void setLayoutManager(int spanCount){
-        this.spanCount = spanCount;
+        presenter.setSpanCount(spanCount);
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), spanCount);
         TransitionManager.beginDelayedTransition(recyclerView, transition);
         recyclerView.setLayoutManager(layoutManager);
         myAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("spanCount", spanCount);
     }
 
 	@Override
@@ -92,10 +86,5 @@ public class GalleryFragment extends MvpAppCompatFragment implements Watchable {
 			.addToBackStack(null)
 			.commit();
 		pager2Fragment.setSeen(presenter);
-	}
-
-	@Override
-	public void updateRecyclerView() {
-//		myAdapter.notifyDataSetChanged();
 	}
 }

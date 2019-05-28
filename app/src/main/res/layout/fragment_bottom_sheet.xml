@@ -6,21 +6,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/fragment_input_fields"/>
+    <include layout="@layout/app_bar"/>
 
-    <include layout="@layout/bottom_sheet"/>
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/fragment_input_fields"/>
+
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_autorenew_white_24dp"
-        app:tint="@android:color/white"
+        app:tint="?attr/colorPrimaryDark"
         app:backgroundTint="?attr/colorAccent"
-        app:layout_anchor = "@id/bottom_sheet"
-        app:layout_anchorGravity = "top|end"
         app:fabSize="auto"
-        app:elevation="8dp"/>
+        app:elevation="16dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,6 +1,5 @@
 package reschikov.geekbrains.gallery.presenter;
 
-import androidx.viewpager2.widget.ViewPager2;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import java.util.ArrayList;
@@ -9,28 +8,26 @@ import java.util.List;
 import javax.inject.Inject;
 import reschikov.geekbrains.gallery.data.Data;
 import reschikov.geekbrains.gallery.data.MyImage;
-import reschikov.geekbrains.gallery.data.dagger.AppDagger;
-import reschikov.geekbrains.gallery.data.files.ImageCash;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Settable;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.Watchable;
 
 @InjectViewState
 public class GalleryPresenter extends MvpPresenter<Watchable> implements Seen {
 
-    private final List<MyImage> list;
-    private final RecyclePresenter recyclePresenter;
-    private int scrollDirection = ViewPager2.ORIENTATION_HORIZONTAL;
-
+    private List<MyImage> list;
+    private final RecyclePresenter recyclePresenter = new RecyclePresenter();
+    private int spanCount;
     @Inject Data data;
-    @Inject	ImageCash imageCash;
 
 	public RecyclePresenter getRecyclePresenter() {
         return recyclePresenter;
     }
 
-    public GalleryPresenter() {
-		AppDagger.getAppDagger().getAppComponent().inject(this);
-	    recyclePresenter = new RecyclePresenter();
+	public void setSpanCount(int spanCount) {
+		this.spanCount = spanCount;
+	}
+
+	public void initGalleryPresenter() {
 	    list = data.getQueue().poll();
     }
 
@@ -39,14 +36,11 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Seen {
 		List<MyImage> added = new ArrayList<>();
 		for (int i = 0; i < list.size(); i++) {
 			MyImage myImage = list.get(i);
-			if (myImage.getRowId() != 0 && myImage.isFavorite()) continue;
 			if (myImage.getRowId() == 0 && myImage.isFavorite()) {
 				added.add(myImage);
 				continue;
 			}
 			if (myImage.getRowId() != 0 && !myImage.isFavorite()) removable.add(myImage);
-			imageCash.removeFileFromCache(myImage.getPreview());
-			imageCash.removeFileFromCache(myImage.getUrl());
 		}
 		if (!removable.isEmpty()) data.removeListMyImages(removable);
 		if (!added.isEmpty()) data.insertListMyImages(added);
@@ -56,11 +50,6 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Seen {
 	public void onDestroy() {
 		super.onDestroy();
 		syncData();
-	}
-
-	@Override
-	public int getOrientation() {
-		return scrollDirection;
 	}
 
 	private class RecyclePresenter implements Bindable{
@@ -84,8 +73,6 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Seen {
         public void delete(int pos) {
         	MyImage myImage = list.get(pos);
 	        if (myImage.getRowId() != 0){
-		        imageCash.removeFileFromCache(myImage.getPreview());
-		        imageCash.removeFileFromCache(myImage.getUrl());
 		        data.removeFromDatabase(myImage);
 	        }
 	        list.remove(myImage);
@@ -106,8 +93,8 @@ public class GalleryPresenter extends MvpPresenter<Watchable> implements Seen {
 		}
 
 		@Override
-		public void getScrollDirection(int direction) {
-			scrollDirection = direction;
+		public int getSpanCount() {
+			return spanCount;
 		}
 	}
 }

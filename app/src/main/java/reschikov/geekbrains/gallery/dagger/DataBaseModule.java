@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.data.dagger;
+package reschikov.geekbrains.gallery.dagger;
 
 import android.content.Context;
 import androidx.room.Room;
@@ -14,7 +14,7 @@ import reschikov.geekbrains.gallery.data.database.MyImageDao;
 @Module
 class DataBaseModule {
 
-	private Context context;
+	private final Context context;
 
 	DataBaseModule(Context context) {
 		this.context = context;
@@ -35,6 +35,9 @@ class DataBaseModule {
 	@Singleton
 	@Provides
 	public Data getData(){
-		return new Data();
+		Data data = new Data();
+		AppDagger.getAppDagger().getAppComponent().inject(data);
+		data.loadFromDatabase();
+		return data;
 	}
 }

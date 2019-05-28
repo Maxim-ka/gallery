@@ -1,6 +1,5 @@
 package reschikov.geekbrains.gallery.data;
 
-import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,8 +10,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import reschikov.geekbrains.gallery.Rule;
-import reschikov.geekbrains.gallery.data.dagger.AppDagger;
 import reschikov.geekbrains.gallery.data.database.MyImageDao;
+import reschikov.geekbrains.gallery.data.files.ImageCash;
+import reschikov.geekbrains.gallery.view.mainActivity.Shown;
 
 public class Data {
 
@@ -20,9 +20,10 @@ public class Data {
 	private final Queue<List<MyImage>> queue = new LinkedList<>();
 	private final List<MyImage> imageList = new ArrayList<>();
 	private final List<String> listPage = new ArrayList<>();
+	private Shown shown;
 
-	@Inject
-	MyImageDao myImageDao;
+	@Inject	MyImageDao myImageDao;
+	@Inject ImageCash imageCash;
 
 	public void setNumberPage(int number) {
 		numberPage = (number <= Rule.DEFAULT_PER_PAGE)? 1 : number / Rule.DEFAULT_PER_PAGE;
@@ -40,11 +41,8 @@ public class Data {
 		return listPage;
 	}
 
-	public Data() {
-		if (AppDagger.getAppDagger() != null){
-			AppDagger.getAppDagger().getAppComponent().inject(this);
-			loadFromDatabase();
-		}
+	public void setShown(Shown shown) {
+		this.shown = shown;
 	}
 
 	public void prepareQueue(){
@@ -115,7 +113,7 @@ public class Data {
 		}
 	}
 
-	void loadFromDatabase(){
+	public void loadFromDatabase(){
 		Disposable disposable = myImageDao.getAll()
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
@@ -126,12 +124,31 @@ public class Data {
 					imageList.add(myImages.get(i));
 				}
 				indicateCompletion("base load");
+				syncCache();
+				indicateCompletion("cache synchronized");
 			},
 			e -> indicateCompletion(String.format("base load %s", e.getMessage())),
 			() -> indicateCompletion("base is empty"));
 	}
 
+	private void syncCache(){
+		if (imageList.isEmpty()) {
+			imageCash.clearCache();
+			return;
+		}
+		String[] namesFiles = imageCash.getFileList();
+		label:for (int i = 0; i < namesFiles.length; i++) {
+			for (int j = 0; j < imageList.size(); j++) {
+				if (namesFiles[i].equals(imageList.get(j).getPreview())
+					|| namesFiles[i].equals(imageList.get(j).getUrl())){
+					continue label;
+				}
+			}
+			imageCash.removeFileFromCache(namesFiles[i]);
+		}
+	}
+
 	private void indicateCompletion(String message){
-		Toast.makeText(AppDagger.getAppDagger().getApplicationContext(), message, Toast.LENGTH_LONG).show();
+		shown.indicate(message);
 	}
 }

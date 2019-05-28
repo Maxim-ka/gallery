@@ -13,8 +13,8 @@ public class FragmentAdapter extends FragmentStatePagerAdapter{
     private final LinkedList<Fragment> listFragment = new LinkedList<>();
     private final LinkedList<String> listTitles = new LinkedList<>();
 
-	FragmentAdapter(@NonNull FragmentManager fm, int behavior) {
-		super(fm, behavior);
+	FragmentAdapter(@NonNull FragmentManager fm) {
+		super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 	}
 
     void addGalleryFragment(GalleryFragment fragment, String number){

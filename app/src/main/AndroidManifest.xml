@@ -15,7 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme0"
-        android:name=".data.dagger.AppDagger"
+        android:name=".dagger.AppDagger"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".view.mainActivity.MainActivity"
             android:windowSoftInputMode="stateHidden">
@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.colorSelectionActivity.ColorThemeSelection">
+        <activity android:name=".view.setting.SettingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

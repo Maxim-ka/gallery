@@ -16,10 +16,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.dagger.AppDagger;
 import reschikov.geekbrains.gallery.presenter.PagerPresenter;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.GalleryFragment;
-
-import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
 
@@ -33,19 +32,18 @@ public class ViewPagerFragment extends MvpAppCompatFragment implements Selected{
 
     @ProvidePresenter
     PagerPresenter providePresenter(){
-        return new PagerPresenter();
+	    PagerPresenter pagerPresenter = new PagerPresenter();
+	    AppDagger.getAppDagger().getAppComponent().inject(pagerPresenter);
+	    pagerPresenter.prepareQueue();
+        return pagerPresenter;
     }
-
-	public PagerPresenter getPresenter() {
-		return presenter;
-	}
 
 	@Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_pager, container, false);
         unbinder = ButterKnife.bind(this, view);
-		fragmentAdapter = new FragmentAdapter(getChildFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+		fragmentAdapter = new FragmentAdapter(getChildFragmentManager());
 		pager.setAdapter(fragmentAdapter);
 	    tabLayout.setupWithViewPager(pager);
         pager.setPageTransformer(true, new DepthTransformation());

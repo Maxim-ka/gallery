@@ -9,14 +9,21 @@
         android:id="@+id/viewList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:background="@drawable/form_separator"
-        android:divider="@android:drawable/divider_horizontal_textfield"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:dividerHeight="3dp"
         android:layout_gravity="center"
-        />
+        android:layout_margin="8dp"
+        android:background="?android:attr/activatedBackgroundIndicator"
+        android:divider="@android:color/black"
+        android:dividerHeight="3dp"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbarFadeDuration="0"
+        android:scrollbarTrackVertical="?attr/colorAccent"
+        android:scrollbarThumbVertical="?attr/colorPrimaryDark"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="outsideInset"
+        android:headerDividersEnabled="true"
+        android:footerDividersEnabled="true"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -28,20 +35,19 @@
 
         <Button
             android:id="@+id/but_cancel"
-            style="@android:style/Widget.Button"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:background="@android:drawable/dialog_holo_light_frame"
             android:text="cancel" />
 
         <Button
             android:id="@+id/but_ok"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="ok"
-            style="@android:style/Widget.Button"/>
+            android:text="ok" />
 
     </LinearLayout>
 

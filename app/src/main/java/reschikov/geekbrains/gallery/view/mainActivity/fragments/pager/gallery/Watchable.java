@@ -12,6 +12,4 @@ public interface Watchable extends MvpView {
     void check(int pos);
 	@StateStrategyType(SkipStrategy.class)
 	void toLook(int position);
-	@StateStrategyType(SkipStrategy.class)
-	void updateRecyclerView();
 }

@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.data.dagger;
+package reschikov.geekbrains.gallery.dagger;
 
 import android.app.Application;
 
@@ -25,7 +25,7 @@ public class AppDagger extends Application {
 
 	public RequestComponent createRequestComponent(){
 		if (requestComponent == null)
-			requestComponent = appComponent.plusRequestComponent(new PreferenceRequestApiPixaBayModule(getApplicationContext()), new RequestModule());
+			requestComponent = appComponent.plusRequestComponent(new PreferenceRequestApiPixaBayModule(getApplicationContext()), new RequestModule(getApplicationContext()));
 		return requestComponent;
 	}
 

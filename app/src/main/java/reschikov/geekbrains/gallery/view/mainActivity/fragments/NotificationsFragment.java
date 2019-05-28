@@ -1,6 +1,5 @@
 package reschikov.geekbrains.gallery.view.mainActivity.fragments;
 
-import android.content.Context;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:divider="?attr/colorPrimary">
+
+    <PreferenceCategory
+        android:title="selection of themes">
+
+        <ListPreference
+            android:key="styles"
+            android:dialogTitle="change the design of the program"
+            android:entries="@array/themes_name"
+            android:entryValues="@array/themes_style"
+            android:defaultValue="AppTheme0"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="api access key">
+
+        <EditTextPreference
+            android:key="key pixabay"
+            android:dialogTitle="change key access Api pixabay"
+            android:defaultValue="@string/key_pixabay"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.data.dagger;
+package reschikov.geekbrains.gallery.dagger;
 import org.mockito.Mockito;
 
 import javax.inject.Singleton;

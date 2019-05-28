@@ -1,4 +1,4 @@
-package reschikov.geekbrains.gallery.data.dagger;
+package reschikov.geekbrains.gallery.dagger;
 
 import android.content.Context;
 
@@ -12,7 +12,7 @@ import reschikov.geekbrains.gallery.data.net.ImageUploader;
 @Module
 class ImageUploaderModule {
 
-	private Context context;
+	private final Context context;
 
 	ImageUploaderModule(Context context) {
 		this.context = context;
@@ -27,6 +27,8 @@ class ImageUploaderModule {
 	@Singleton
 	@Provides
 	ImageUploader provideImageUploader(){
-		return new ImageUploader(context);
+		ImageUploader imageUploader = new ImageUploader(context);
+		imageUploader.imageCash = getImageCash();
+		return imageUploader;
 	}
 }

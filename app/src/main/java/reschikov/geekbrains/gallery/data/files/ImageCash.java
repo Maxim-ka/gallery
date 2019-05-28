@@ -1,23 +1,20 @@
 package reschikov.geekbrains.gallery.data.files;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ImageCash {
 
-	public void saveToCash(Bitmap bitmap, String name){
+	private static final int QUALITY = 100;
+
+	public void saveToCash(Bitmap bitmap, String name) throws IOException {
 		if (!isExternalStorageWritable()) return;
-		String newName = Uri.parse(name).getLastPathSegment();
-		File fileImage = new File(getAlbumStorageDir(), newName);
+		File fileImage = new File(getAlbumStorageDir(), name);
 		try (FileOutputStream fos = new FileOutputStream(fileImage)) {
-			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-		} catch (IOException e) {
-			Log.e("saveToCash: ", e.getMessage());
+			bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, fos);
 		}
 	}
 
@@ -25,6 +22,18 @@ public class ImageCash {
 		File file;
 		if ((file = new File(getAlbumStorageDir(), name)).exists()) return file;
 		return null;
+	}
+
+	public String[] getFileList(){
+		return getAlbumStorageDir().list();
+	}
+
+	public void clearCache(){
+		File[] files = getAlbumStorageDir().listFiles();
+		if (files == null) return;
+		for (int i = 0; i < files.length; i++) {
+			files[i].delete();
+		}
 	}
 
 	public void removeFileFromCache(String name){

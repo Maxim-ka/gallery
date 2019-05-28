@@ -16,12 +16,14 @@ import reschikov.geekbrains.gallery.presenter.GalleryPresenter;
 import reschikov.geekbrains.gallery.presenter.Seen;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.pager.gallery.MyAdapterRecycleView;
 
-public class ViewPager2Fragment extends Fragment{
+public class ViewPager2Fragment extends Fragment implements Observer{
+
+	private static final String KEY_POSITION = "position";
 
 	public static ViewPager2Fragment newInstance(int position){
 		ViewPager2Fragment fragment = new ViewPager2Fragment();
 		Bundle args = new Bundle();
-		args.putInt("position", position);
+		args.putInt(KEY_POSITION, position);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -39,26 +41,21 @@ public class ViewPager2Fragment extends Fragment{
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_view_pager_2, container, false);
 		unbinder = ButterKnife.bind(this, view);
-		MyAdapterRecycleView adapter = new MyAdapterRecycleView(((GalleryPresenter) seen).getRecyclePresenter(), true);
+		MyAdapterRecycleView adapter = new MyAdapterRecycleView(((GalleryPresenter) seen).getRecyclePresenter(), this);
 		pager.setAdapter(adapter);
 		if (getArguments() != null){
-			int position = getArguments().getInt("position");
+			int position = getArguments().getInt(KEY_POSITION);
 			pager.setCurrentItem(position, false);
 		}
-		pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-			@Override
-			public void onPageScrollStateChanged(int state) {
-				super.onPageScrollStateChanged(state);
-				if (state == ViewPager2.SCROLL_STATE_IDLE){
-					if (pager.getOrientation() != seen.getOrientation()){
-						pager.setOrientation(seen.getOrientation());
-						// TODO: 22.05.2019 сделать задержку анимацией
-					}
-				}
-			}
-		});
 //		pager.setPageTransformer(new DepthTransformation());
 		return view;
+	}
+
+	@Override
+	public void changeOrientation(int orientation) {
+		if (pager.getOrientation() != orientation){
+			pager.setOrientation(orientation);
+		}
 	}
 
 	@Override

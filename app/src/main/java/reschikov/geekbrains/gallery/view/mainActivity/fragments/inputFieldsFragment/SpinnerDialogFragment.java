@@ -3,6 +3,7 @@ package reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFrag
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -18,21 +19,29 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.collection.ArraySet;
+
+import java.util.Set;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
 import butterknife.Unbinder;
 import reschikov.geekbrains.gallery.R;
+import reschikov.geekbrains.gallery.Rule;
 import reschikov.geekbrains.gallery.data.SelectionParameter;
 
 public class SpinnerDialogFragment extends AppCompatDialogFragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
-	static SpinnerDialogFragment newInstance(SelectionParameter[] parameters, String title){
+	private static final float SCOPE_HEIGHT = 0.5f;
+
+	static SpinnerDialogFragment newInstance(SelectionParameter[] parameters, String title, String key){
 		SpinnerDialogFragment fragment = new SpinnerDialogFragment();
 		Bundle args = new Bundle();
 		args.putParcelableArray("parameters", parameters);
 		args.putString("title", title);
+		args.putString("key", key);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -42,7 +51,9 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 	@BindView(R.id.but_ok) Button butOk;
 	private Unbinder unbinder;
 	private String title;
+	private String key;
 	private Selectable selectable;
+	private SharedPreferences preferences;
 
 	@Nullable
 	@Override
@@ -51,12 +62,14 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 		unbinder = ButterKnife.bind(this,view);
 		float scope = 0;
 		if (getArguments() != null){
+			key = getArguments().getString("key");
 			title = getArguments().getString("title");
 			if (getDialog() != null) getDialog().setTitle(title);
 			SelectionParameter[] parameters = (SelectionParameter[]) getArguments().getParcelableArray("parameters");
 			if (getContext() != null && parameters != null){
-				if (parameters.length > 6) scope = 0.85f;
-				listView.setAdapter(new MyAdapterSelectionParameters(getContext(), android.R.layout.select_dialog_multichoice, parameters));
+				preferences = getContext().getSharedPreferences(Rule.REQUEST_PARAMETERS, Context.MODE_PRIVATE);
+				if (parameters.length > 6) scope = SCOPE_HEIGHT;
+				listView.setAdapter(new MyAdapterSelectionParameters(getContext(), parameters));
 			}
 		}
 		if (scope != 0 && getActivity() != null) {
@@ -75,9 +88,24 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 				resetChange((MyAdapterSelectionParameters) listView.getAdapter());
 				break;
 			case R.id.but_ok:
+				saveSelectedSettings();
+				break;
 		}
 		selectable.toFinish(title);
 		dismiss();
+	}
+
+	private void saveSelectedSettings(){
+		Set<String> set = preferences.getStringSet(key, new ArraySet<>());
+		if (set == null) return;
+		if (!set.isEmpty()) set.clear();
+		for (int i = 0; i < listView.getAdapter().getCount(); i++) {
+			SelectionParameter parameter = (SelectionParameter) listView.getAdapter().getItem(i);
+			if (parameter.isSelected())	set.add(parameter.getParameter());
+		}
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putStringSet(key, set);
+		editor.apply();
 	}
 
 	@OnItemClick({R.id.viewList})
@@ -95,7 +123,7 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 	public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 		Dialog dialog = super.onCreateDialog(savedInstanceState);
 		if (getActivity() != null){
-			FieldsFragment fragment = (FieldsFragment) getActivity().getSupportFragmentManager().findFragmentByTag("Tag_Home");
+			FieldsFragment fragment = (FieldsFragment) getActivity().getSupportFragmentManager().findFragmentByTag(Rule.TAG_SEARCH);
 			if (fragment != null) selectable = fragment.presenter;
 		}
 		return dialog;
@@ -104,6 +132,13 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 	private void resetChange(MyAdapterSelectionParameters adapter){
 		for (int i = 0; i < adapter.getCount(); i++) {
 			selectable.select(i, false, title);
+		}
+		Set<String> set = preferences.getStringSet(key, new ArraySet<>());
+		if (set != null && !set.isEmpty()){
+			set.clear();
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putStringSet(key, set);
+			editor.apply();
 		}
 	}
 
@@ -134,8 +169,8 @@ public class SpinnerDialogFragment extends AppCompatDialogFragment implements Vi
 
 	private static class MyAdapterSelectionParameters extends ArrayAdapter<SelectionParameter> {
 
-		MyAdapterSelectionParameters(@NonNull Context context, int resource, @NonNull SelectionParameter[] objects) {
-			super(context, resource, objects);
+		MyAdapterSelectionParameters(@NonNull Context context, @NonNull SelectionParameter[] objects) {
+			super(context, android.R.layout.select_dialog_multichoice, objects);
 		}
 
 		@NonNull

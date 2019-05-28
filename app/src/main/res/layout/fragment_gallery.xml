@@ -5,10 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
-    tools:listitem="@layout/item"
-    >
-
-
+    android:padding="4dp"
+    tools:listitem="@layout/item" >
 
 </androidx.recyclerview.widget.RecyclerView>

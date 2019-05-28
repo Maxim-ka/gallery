@@ -12,8 +12,8 @@ import reschikov.geekbrains.gallery.Rule;
 import reschikov.geekbrains.gallery.data.Data;
 import reschikov.geekbrains.gallery.data.Reply;
 import reschikov.geekbrains.gallery.data.SelectionParameter;
-import reschikov.geekbrains.gallery.data.dagger.AppDagger;
-import reschikov.geekbrains.gallery.data.net.RequestApiPixaBay;
+import reschikov.geekbrains.gallery.dagger.AppDagger;
+import reschikov.geekbrains.gallery.data.net.ServerRequest;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment.Displayed;
 import reschikov.geekbrains.gallery.view.mainActivity.fragments.inputFieldsFragment.Selectable;
 import retrofit2.Response;
@@ -21,19 +21,18 @@ import retrofit2.Response;
 @InjectViewState
 public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectable {
 
-	@Named("types")
+	@Named(Rule.TYPES)
 	@Inject
 	SelectionParameter[] types;
-	@Named("orientations")
+	@Named(Rule.ORIENTATIONS)
 	@Inject
 	SelectionParameter[] orientations;
-	@Named("categories")
+	@Named(Rule.CATEGORIES)
 	@Inject
 	SelectionParameter[] categories;
 	@Inject
-	RequestApiPixaBay request;
-
-	private Data data;
+	ServerRequest request;
+	@Inject public Data data;
 	private String queryTypes;
 	private String queryOrientations;
 	private String queryCategories;
@@ -55,9 +54,10 @@ public class FieldsPresenter extends MvpPresenter<Displayed> implements Selectab
 		this.number = number;
 	}
 
-	public FieldsPresenter() {
-		AppDagger.getAppDagger().createRequestComponent().inject(this);
-		data = AppDagger.getAppDagger().getAppComponent().getData();
+	public void init(){
+		toFinish("image Types");
+		toFinish("image Orientations");
+		toFinish("image Categories");
 	}
 
 	public void sendRequest(@Nullable String what){

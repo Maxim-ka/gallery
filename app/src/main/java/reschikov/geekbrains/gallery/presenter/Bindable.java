@@ -9,5 +9,5 @@ public interface Bindable {
     void delete(int pos);
     void setFavorite(int pos, boolean isChecked);
     void toSee(int position);
-    void getScrollDirection(int direction);
+    int getSpanCount();
 }
